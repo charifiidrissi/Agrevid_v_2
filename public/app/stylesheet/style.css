@@ -1,0 +1,283 @@
+body {
+    background-image: url("../images/background_principal.jpg");
+    padding: 15px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+    color: #00B7FF;
+
+}
+
+.hideFromSight {
+    display:none;
+    visibility: hidden;
+}
+
+.center {
+    position: absolute;
+    left: 0;
+    top: 40%;
+    width: 100%;
+    text-align: center;
+}
+
+.logo {
+    font: 150px "Gill Sans Ultra Bold", Helvetica, Arial, sans-serif;
+    color : rgb(255, 193, 169);
+    font-style: italic;
+    font-weight: bold;
+    text-shadow: 3px 3px 5px #9c4343;
+}
+
+.logoStyle{
+    font: 30px "Gill Sans Ultra Bold", Helvetica, Arial, sans-serif;
+    color : rgb(255, 193, 169);
+    font-style: italic;
+    font-weight: bold;
+    /*text-shadow: 3px 3px 5px rgba(255, 103, 102, 0.48);*/
+    /*text-align: center;*/
+    text-shadow: 3px 3px 5px #9c4343;
+}
+
+.button-accueil{
+    color: #ffff;
+    background-color : #ff6968;
+}
+
+.margin-right-4em{
+    margin-right: 4em;
+}
+
+/*Login/Register modal css */
+@import url(http://fonts.googleapis.com/css?family=Roboto);
+
+/****** LOGIN MODAL ******/
+.loginmodal-container {
+    padding: 30px;
+    max-width: 350px;
+    width: 100% !important;
+    background-color: #F7F7F7;
+    margin: 0 auto;
+    border-radius: 2px;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;}
+
+.loginmodal-container h1 {
+    text-align: center;
+    font-size: 1.8em;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;}
+
+.loginmodal-container input[type=submit] {
+    width: 100%;
+    display: block;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.loginmodal-container input[type=text], input[type=password] {
+    font-size: 16px;
+    width: 100%;
+    margin-bottom: 10px;
+    -webkit-appearance: none;
+    background: #fff;
+    border: 1px solid #d9d9d9;
+    border-top: 1px solid #c0c0c0;
+    /* border-radius: 2px; */
+    padding: 0 8px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+}
+
+.loginmodal-container input[type=text]:hover, input[type=password]:hover {
+    border: 1px solid #b9b9b9;
+    border-top: 1px solid #a0a0a0;
+    -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    -webkit-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.loginmodal {
+    text-align: center;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    font-weight: 700;
+    height: 36px;
+    padding: 0 8px;
+    /* border-radius: 3px; */
+    /* -webkit-user-select: none;
+      user-select: none; */
+}
+
+.loginmodal-submit {
+    /* border: 1px solid #3079ed; */
+    border: 0px;
+    color: #fff;
+    text-shadow: 0 1px rgba(0,0,0,0.1);
+    background-color: #4d90fe;
+    padding: 17px 0px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    font-size: 14px;
+    /* background-image: -webkit-gradient(linear, 0 0, 0 100%,   from(#4d90fe), to(#4787ed)); */
+}
+
+.loginmodal-submit:hover {
+    /* border: 1px solid #2f5bb7; */
+    border: 0px;
+    text-shadow: 0 1px rgba(0,0,0,0.3);
+    background-color: #357ae8;
+    /* background-image: -webkit-gradient(linear, 0 0, 0 100%,   from(#4d90fe), to(#357ae8)); */
+}
+
+.loginmodal-container a {
+    text-decoration: none;
+    color: #666;
+    font-weight: 400;
+    text-align: center;
+    display: inline-block;
+    opacity: 0.6;
+    transition: opacity ease 0.5s;
+}
+
+.login-help{
+    font-size: 10px;
+}
+
+/*  VIDEO PLAYER CONTAINER
+ 		############################### */
+.vid-container {
+    position: relative;
+    padding-bottom: 35%;
+    padding-top: 5px;
+    margin-top: 10px;
+    margin-left: 10%;
+    margin-right: 10%;
+    height: 0;
+}
+
+.vid-container iframe,
+.vid-container object,
+.vid-container embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+
+/*  VIDEOS PLAYLIST
+ ############################### */
+.vid-list-container {
+    width: 70%;
+    overflow: hidden;
+    margin-top: 5px;
+    margin-left: 14%;
+    padding-bottom: 15px;
+    background-color: #FFE4E1;
+}
+
+.vid-list {
+    width: 1344px;
+    position: relative;
+    top:0;
+    left: 0;
+}
+
+.vid-item {
+    display: block;
+    width: 148px;
+    height: 148px;
+    float: left;
+    margin: 0;
+    padding: 10px;
+}
+
+.thumb {
+    /*position: relative;*/
+    overflow:hidden;
+    height: 84px;
+}
+
+.thumb img {
+    width: 100%;
+    position: relative;
+    top: -13px;
+}
+
+.vid-item .desc {
+    color: #21A1D2;
+    font-size: 15px;
+    margin-top:5px;
+}
+
+.vid-item:hover {
+    background: #eee;
+    cursor: pointer;
+}
+
+.arrows {
+    position:relative;
+    width: 100%;
+}
+
+.arrow-left {
+    color: #fff;
+    position: absolute;
+    background: #777;
+    padding: 15px;
+    left: -25px;
+    top: -130px;
+    z-index: 99;
+    cursor: pointer;
+}
+
+.arrow-right {
+    color: #fff;
+    position: absolute;
+    background: #777;
+    padding: 15px;
+    right: 155px;
+    top: -160px;
+    z-index:100;
+    cursor: pointer;
+}
+
+.arrow-left:hover {
+    background: #CC181E;
+}
+
+.arrow-right:hover {
+    background: #CC181E;
+}
+
+
+@media (max-width: 624px) {
+    body {
+        margin: 15px;
+    }
+
+    .caption {
+        margin-top: 40px;
+    }
+
+    .vid-list-container {
+        padding-bottom: 20px;
+    }
+}
+/* reposition left/right arrows */
+.arrows {
+    position:relative;
+    margin: 0 auto;
+    width:96px;
+}
+.arrow-left {
+    left: 0;
+    top: -17px;
+}
+
+.arrow-right {
+    right: 0;
+    top: -17px;
+}

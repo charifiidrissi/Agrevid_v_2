@@ -1,0 +1,12 @@
+<div ng-if="main.loggedIn" ng-controller="UserController as userCtrl">
+    <h1>Administration</h1>
+
+
+    <form ng-submit="userCtrl.deleteUser()">
+        <input class="form-control input-lg" type="text" name="username" ng-model="userCtrl.userData.username"
+               placeholder="......" required>
+        <button class="btn btn-danger" type="submit">Delete</button>
+    </form>
+
+</div>
+
