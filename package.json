@@ -10,10 +10,12 @@
     "body-parser": "^1.18.3",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
+    "email-validator": "^2.0.4",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.3.0",
     "mongoose": "^5.3.4",
     "morgan": "^1.9.1",
+    "simple-password-validator": "^1.0.2",
     "socket.io": "^2.1.1"
   },
   "devDependencies": {

@@ -1,5 +1,6 @@
 const User = require('../models/user');
 let config = require('../../config');
+let validator = require('email-validator');
 
 let secretKey = config.secretKey;
 
@@ -36,6 +37,19 @@ module.exports = function (app, express, io) {
     let api = express.Router();
 
 
+    api.post('/checkEmail',function(req,res){
+        if(validator.validate(req.body.username)){
+            res.json({
+                checked : true
+            });
+        }
+        else{
+            res.json({
+                checked : false
+            });
+        }
+    });
+
     api.post('/signup', function (req, res) {
         let user = new User({
             name: req.body.name,
@@ -66,11 +80,11 @@ module.exports = function (app, express, io) {
         }).select('name username password admin').exec(function (err, user) {
             if (err) throw err;
             if (!user) {
-                res.send({message: "User doesnt exist"});
+                res.send({message: "L'utilisateur n'existe pas !"});
             } else if (user) {
                 let validPassword = user.comparePassword(req.body.password);
                 if (!validPassword) {
-                    res.send({message: "Invalid Password!"});
+                    res.send({message: "Mot de passe incorrecte !"});
                 } else {
                     //Create a token for the login
                     let token = createToken(user);

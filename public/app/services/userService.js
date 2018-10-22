@@ -18,5 +18,10 @@ angular.module('userService',[])
         return $http.post('/api/deleteUser',userData);
     }
 
+
+    userFactory.checkEmail = function(userData){
+        return $http.post('/api/checkEmail',userData);
+    }
+
     return userFactory;
 });

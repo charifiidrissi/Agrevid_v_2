@@ -24,5 +24,9 @@ angular.module('appRoutes',['ngRoute'])
             templateUrl: 'app/views/pages/playlist.html'
         })
 
+        .when('/logout',{
+            templateUrl: 'app/views/pages/logout.html'
+        })
+
     $locationProvider.html5Mode(true);
 })
