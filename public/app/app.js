@@ -1,4 +1,4 @@
-angular.module('MyApp',['appRoutes','mainCtrl','authService','userCtrl','userService'])
+angular.module('MyApp',['appRoutes','mainCtrl','authService','userCtrl','userService','videoCtrl','videoService'])
 
 .config(function($httpProvider){
     $httpProvider.interceptors.push('AuthInterceptor');

@@ -15,10 +15,12 @@
 
     <script type="text/javascript" src="app/services/authService.js"></script>
     <script type="text/javascript" src="app/services/userService.js"></script>
+    <script type="text/javascript" src="app/services/videoService.js"></script>
 
 
     <script type="text/javascript" src="app/controllers/mainController.js"></script>
     <script type="text/javascript" src="app/controllers/userCtrl.js"></script>
+    <script type="text/javascript" src="app/controllers/videoCtrl.js"></script>
 
     <script type="text/javascript" src="app/app.routes.js"></script>
     <script type="text/javascript" src="app/app.js"></script>
@@ -40,9 +42,9 @@
             <ul class="nav navbar-nav navbar-right">
                 <li ng-if="!main.loggedIn"><a href="/login">Connexion</a></li>
                 <li ng-if="!main.loggedIn"><a href="/signup">Inscription</a></li>
-                <li ng-if="main.loggedIn">
-                    <form ng-submit="" class="margin-right-4em">
-                        <input class="form-control input-lg" style="width: 500px" type="text" name=""
+                <li ng-if="main.loggedIn" ng-controller="VideoController as video">
+                    <form  ng-submit="video.doSearch()" class="margin-right-4em">
+                        <input class="form-control input-lg"  type="text" name="search" ng-model="video.search.title"
                                placeholder="Rechercher une video ...">
                     </form>
                 </li>

@@ -28,5 +28,9 @@ angular.module('appRoutes',['ngRoute'])
             templateUrl: 'app/views/pages/logout.html'
         })
 
+        .when('/video',{
+            templateUrl: 'app/views/pages/videoStream.html'
+        })
+
     $locationProvider.html5Mode(true);
 })

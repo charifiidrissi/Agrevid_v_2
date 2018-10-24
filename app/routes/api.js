@@ -1,6 +1,8 @@
 const User = require('../models/user');
 let config = require('../../config');
 let validator = require('email-validator');
+const ytSearch = require('yt-search');
+const Youtube = require('youtube-stream-url');
 
 let secretKey = config.secretKey;
 
@@ -24,7 +26,7 @@ function createToken(user) {
         id: user._id,
         name: user.name,
         username: user.username,
-        admin : user.admin
+        admin: user.admin
     }, secretKey, {
         //Le temps où l'utilisateur peut rester connecté avant de devoir se reconnecter
         expiresIn: 3600
@@ -37,15 +39,15 @@ module.exports = function (app, express, io) {
     let api = express.Router();
 
 
-    api.post('/checkEmail',function(req,res){
-        if(validator.validate(req.body.username)){
+    api.post('/checkEmail', function (req, res) {
+        if (validator.validate(req.body.username)) {
             res.json({
-                checked : true
+                checked: true
             });
         }
-        else{
+        else {
             res.json({
-                checked : false
+                checked: false
             });
         }
     });
@@ -55,7 +57,7 @@ module.exports = function (app, express, io) {
             name: req.body.name,
             username: req.body.username,
             password: req.body.password,
-            admin : false
+            admin: false
         });
 
         let token = createToken(user);
@@ -100,7 +102,6 @@ module.exports = function (app, express, io) {
     });
 
 
-
     /*UP : destination A*/
     /*DOWN : destination B*/
     //position of this middlware in the code is important !
@@ -141,7 +142,7 @@ module.exports = function (app, express, io) {
         });
     });
 
-
+    //ATTENTION : FAILLE => il faut privilégier cette méthode à l'administrateur seul
     api.post('/deleteUser', function (req, res) {
         User.deleteOne({username: req.body.username}, function (err) {
             if (err)
@@ -152,6 +153,31 @@ module.exports = function (app, express, io) {
     });
 
 
+    /*Méthodes pour video*/
+    api.post('/videoSearch', function (req, res) {
+        let search = req.body.title;
+        ytSearch(search, function (err, r) {
+            if (err) throw err;
+
+            const videos = r.videos;
+            // const playlists = r.playlists;
+            // const accounts = r.accounts;
+
+            const firstResult = videos[0];
+            const resultId = firstResult.videoId;
+
+            console.log(resultId);
+
+            Youtube.getInfo({url: "https://www.youtube.com/watch?v=" + resultId})
+                .then(function (video) {
+                    if(video){
+                        res.json({
+                            url: video.formats[0].url
+                        })
+                    }
+                });
+        })
+    })
 
 
     return api
