@@ -4,7 +4,7 @@ let validator = require('email-validator');
 const ytSearch = require('yt-search');
 const Youtube = require('youtube-stream-url');
 const YouTube2 = require('simple-youtube-api');
-const youtube = new YouTube2('AIzaSyBXPHBDbxvRVBWtc_9AkDHiRtAk0q2ms_o');
+const youtube = new YouTube2('your api key');
 let fs = require('fs');
 const ytdl = require('ytdl-core');
 
