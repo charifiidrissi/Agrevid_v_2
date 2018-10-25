@@ -32,5 +32,7 @@ angular.module('appRoutes',['ngRoute'])
             templateUrl: 'app/views/pages/videoStream.html'
         })
 
+        .otherwise('/');
+
     $locationProvider.html5Mode(true);
 })

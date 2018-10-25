@@ -4,5 +4,7 @@
 <!--</div>-->
 
 <div class="vid-container" ng-controller="VideoController as v">
-    <video id="vid_frame" controls controlsList="nodownload" src="{{v.trustSrc(v.url)}}" frameborder="0" width="560" height="275"></video>
+    <!--<iframe id="vid_frame" controls controlsList="nodownload" src="{{v.trustSrc(v.url)}}" frameborder="0" width="560" height="275"></iframe>-->
+    <video id="vid_frame" controls controlsList="nodownload" src="{{__dirname+'/api/streamVideo/'+v.searchTitle}}" type="video/mp4" frameborder="0" width="560" height="275"></video>
+    <!--<video id="vid_frame" controls controlsList="nodownload" src="https://www.youtube.com/embed/v=ViG7bHOgpXo" frameborder="0" width="560" height="275"></video>-->
 </div>

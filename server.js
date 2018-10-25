@@ -6,7 +6,9 @@ const https = require('https');
 const fs = require('fs');
 let config = require('./config');
 let app = express();
-
+const YouTube2 = require('simple-youtube-api');
+const youtube = new YouTube2('AIzaSyBXPHBDbxvRVBWtc_9AkDHiRtAk0q2ms_o');
+const ytdl = require('ytdl-core');
 /*-----------------------------------------------------------------------*/
 /*Create connections to mongodb Databases*/
 /*let mongoose = require('mongoose');
@@ -72,6 +74,7 @@ app.use('/api', api);
 app.get('/',function(req,res){
    res.sendFile(__dirname + '/public/app/views/index.html');
 });
+
 
 
 serverHttps.listen(config.port,function(err){

@@ -3,19 +3,14 @@ let config = require('../../config');
 let validator = require('email-validator');
 const ytSearch = require('yt-search');
 const Youtube = require('youtube-stream-url');
+const YouTube2 = require('simple-youtube-api');
+const youtube = new YouTube2('AIzaSyBXPHBDbxvRVBWtc_9AkDHiRtAk0q2ms_o');
+let fs = require('fs');
+const ytdl = require('ytdl-core');
 
 let secretKey = config.secretKey;
 
-// let mongoose = require('mongoose');
 
-/*mongoose.connect(config.database,{ useNewUrlParser: true },function (err) {
-    if(err){
-        console.log(err);
-    }else{
-        console.log("Connected to userStory database successfully.");
-    }
-});
-mongoose.set('useCreateIndex', true);*/
 
 
 //for creating tokens
@@ -37,6 +32,22 @@ function createToken(user) {
 
 module.exports = function (app, express, io) {
     let api = express.Router();
+
+    api.get('/streamVideo/:search',function(req,res){
+        let search = req.params.search;
+        console.log(search);
+        res.writeHead(200,{'Content-Type':'video/mp4'});
+        youtube.searchVideos(search, 1)
+            .then(function(results) {
+                console.log(`The video's title is ${results[0].title}`);
+
+                ytdl(results[0].url)
+                    .pipe(res);
+
+            })
+            .catch(console.log);
+
+    })
 
 
     api.post('/checkEmail', function (req, res) {
@@ -152,8 +163,8 @@ module.exports = function (app, express, io) {
         });
     });
 
-
-    /*Méthodes pour video*/
+/*------------------------------------------------------------------------------------*/
+   /* /!*Méthodes pour video*!/
     api.post('/videoSearch', function (req, res) {
         let search = req.body.title;
         ytSearch(search, function (err, r) {
@@ -178,6 +189,21 @@ module.exports = function (app, express, io) {
                 });
         })
     })
+
+    api.post('/youtubeSearch',function (req,res) {
+        youtube.searchVideos(req.body.search, 1)
+            .then(function(results) {
+                console.log(`The video's title is ${results[0].title}`);
+
+
+                ytdl(results[0].url)
+                    .pipe(res);
+
+            })
+            .catch(console.log);
+    })
+*/
+
 
 
     return api
