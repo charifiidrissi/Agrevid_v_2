@@ -8,6 +8,9 @@ const youtube = new YouTube2('your api key');
 let fs = require('fs');
 const ytdl = require('ytdl-core');
 const vidl = require('vimeo-downloader');
+/*Vimeo variables*/
+const Vimeo = require('vimeo').Vimeo;
+const client = new Vimeo(config.CLIENT_ID, config.CLIENT_SECRET, config.ACCESS_TOKEN);
 
 
 let secretKey = config.secretKey;
@@ -50,24 +53,53 @@ module.exports = function (app, express, io) {
     })
 
     api.get('/streamVimeo/:search', function (req, res) {
+        let search = req.params.search;
 
         res.writeHead(200, {'Content-Type': 'video/mp4'});
+            client.request(/*options*/{
+            // This is the path for the videos contained within the staff picks
+            // channels
+            path: '/videos?query='+search,
+            // This adds the parameters to request page two, and 10 items per
+            // page
 
-        let stream = vidl('https://vimeo.com/28714490', {quality: '360p'});
+                query: {
+                    page: 1
+                }
 
-        stream.pipe(res);
+        }, /*callback*/function (error, body, status_code, headers) {
+            if (error) {
+                console.log('error');
+                console.log(error);
+            } else {
+                console.log('link to the video');
+                console.log(body);
+                /*Stream the video to the res*/
 
-        stream.on('error', function (err) {
-            console.error(err);
-            console.info("Steam emit the error")
+                let stream = vidl(body.data[0].link, {quality: '360p'});
+
+                stream.pipe(res);
+
+                stream.on('error', function (err) {
+                    console.error(err);
+                    console.info("Steam emit the error")
+                });
+
+                stream.on('data', function (chunk) {
+                });
+
+                stream.on('end', function () {
+                    console.log('Finished');
+                });
+            }
+
+            // console.log('status code');
+            // console.log(status_code);
+            // console.log('headers');
+            // console.log(headers);
         });
 
-        stream.on('data', function (chunk) {
-        });
 
-        stream.on('end', function () {
-            console.log('Finished');
-        });
 
     })
 
