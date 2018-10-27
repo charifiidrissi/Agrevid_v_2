@@ -7,10 +7,10 @@ const YouTube2 = require('simple-youtube-api');
 const youtube = new YouTube2('your api key');
 let fs = require('fs');
 const ytdl = require('ytdl-core');
+const vidl = require('vimeo-downloader');
+
 
 let secretKey = config.secretKey;
-
-
 
 
 //for creating tokens
@@ -33,12 +33,12 @@ function createToken(user) {
 module.exports = function (app, express, io) {
     let api = express.Router();
 
-    api.get('/streamVideo/:search',function(req,res){
+    api.get('/streamYoutube/:search', function (req, res) {
         let search = req.params.search;
         console.log(search);
-        res.writeHead(200,{'Content-Type':'video/mp4'});
+        res.writeHead(200, {'Content-Type': 'video/mp4'});
         youtube.searchVideos(search, 1)
-            .then(function(results) {
+            .then(function (results) {
                 console.log(`The video's title is ${results[0].title}`);
 
                 ytdl(results[0].url)
@@ -46,6 +46,28 @@ module.exports = function (app, express, io) {
 
             })
             .catch(console.log);
+
+    })
+
+    api.get('/streamVimeo/:search', function (req, res) {
+
+        res.writeHead(200, {'Content-Type': 'video/mp4'});
+
+        let stream = vidl('https://vimeo.com/28714490', {quality: '360p'});
+
+        stream.pipe(res);
+
+        stream.on('error', function (err) {
+            console.error(err);
+            console.info("Steam emit the error")
+        });
+
+        stream.on('data', function (chunk) {
+        });
+
+        stream.on('end', function () {
+            console.log('Finished');
+        });
 
     })
 
@@ -163,47 +185,46 @@ module.exports = function (app, express, io) {
         });
     });
 
-/*------------------------------------------------------------------------------------*/
-   /* /!*Méthodes pour video*!/
-    api.post('/videoSearch', function (req, res) {
-        let search = req.body.title;
-        ytSearch(search, function (err, r) {
-            if (err) throw err;
+    /*------------------------------------------------------------------------------------*/
+    /* /!*Méthodes pour video*!/
+     api.post('/videoSearch', function (req, res) {
+         let search = req.body.title;
+         ytSearch(search, function (err, r) {
+             if (err) throw err;
 
-            const videos = r.videos;
-            // const playlists = r.playlists;
-            // const accounts = r.accounts;
+             const videos = r.videos;
+             // const playlists = r.playlists;
+             // const accounts = r.accounts;
 
-            const firstResult = videos[0];
-            const resultId = firstResult.videoId;
+             const firstResult = videos[0];
+             const resultId = firstResult.videoId;
 
-            console.log(resultId);
+             console.log(resultId);
 
-            Youtube.getInfo({url: "https://www.youtube.com/watch?v=" + resultId})
-                .then(function (video) {
-                    if(video){
-                        res.json({
-                            url: video.formats[0].url
-                        })
-                    }
-                });
-        })
-    })
+             Youtube.getInfo({url: "https://www.youtube.com/watch?v=" + resultId})
+                 .then(function (video) {
+                     if(video){
+                         res.json({
+                             url: video.formats[0].url
+                         })
+                     }
+                 });
+         })
+     })
 
-    api.post('/youtubeSearch',function (req,res) {
-        youtube.searchVideos(req.body.search, 1)
-            .then(function(results) {
-                console.log(`The video's title is ${results[0].title}`);
+     api.post('/youtubeSearch',function (req,res) {
+         youtube.searchVideos(req.body.search, 1)
+             .then(function(results) {
+                 console.log(`The video's title is ${results[0].title}`);
 
 
-                ytdl(results[0].url)
-                    .pipe(res);
+                 ytdl(results[0].url)
+                     .pipe(res);
 
-            })
-            .catch(console.log);
-    })
-*/
-
+             })
+             .catch(console.log);
+     })
+ */
 
 
     return api

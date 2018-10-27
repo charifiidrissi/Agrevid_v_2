@@ -6,7 +6,7 @@ angular.module('videoService',[])
     videoFactory.url = '';
 
     videoFactory.search = function (search) {
-        return $http.get('/api/streamVideo/'+search.title);
+        return $http.get('/api/streamYoutube/'+search.title);
     }
 
     videoFactory.setSearchTitle = function (searchTitle){
