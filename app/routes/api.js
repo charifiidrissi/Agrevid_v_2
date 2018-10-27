@@ -72,8 +72,6 @@ module.exports = function (app, express, io) {
                 console.log('error');
                 console.log(error);
             } else {
-                console.log('link to the video');
-                console.log(body);
                 /*Stream the video to the res*/
 
                 let stream = vidl(body.data[0].link, {quality: '360p'});

@@ -5,7 +5,9 @@
 
 <div class="vid-container" ng-controller="VideoController as v">
     <!--<iframe id="vid_frame" controls controlsList="nodownload" src="{{v.trustSrc(v.url)}}" frameborder="0" width="560" height="275"></iframe>-->
+    <h2>Video from youtube</h2>
     <video id="vid_frame" controls controlsList="nodownload" src="{{__dirname+'/api/streamYoutube/'+v.searchTitle}}" type="video/mp4" frameborder="0" width="560" height="275"></video>
+    <h2>Video from vimeo</h2>
     <video id="vid_frame2" controls controlsList="nodownload" src="{{__dirname+'/api/streamVimeo/'+v.searchTitle}}" type="video/mp4" frameborder="0" width="560" height="275"></video>
     <!--<video id="vid_frame" controls controlsList="nodownload" src="https://www.youtube.com/embed/v=ViG7bHOgpXo" frameborder="0" width="560" height="275"></video>-->
 </div>
