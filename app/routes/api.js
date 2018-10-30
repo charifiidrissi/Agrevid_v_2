@@ -55,6 +55,9 @@ module.exports = function (app, express, io) {
     api.get('/streamVimeo/:search', function (req, res) {
         let search = req.params.search;
 
+        search = search.replace(/ /g,"+");
+        console.log(search);
+
         res.writeHead(200, {'Content-Type': 'video/mp4'});
             client.request(/*options*/{
             // This is the path for the videos contained within the staff picks
