@@ -5,9 +5,9 @@ angular.module('videoService',[])
 
     videoFactory.url = '';
 
-    videoFactory.search = function (search) {
+    /*videoFactory.search = function (search) {
         return $http.get('/api/streamYoutube/'+search.title);
-    }
+    }*/
 
     videoFactory.setSearchTitle = function (searchTitle){
         if(searchTitle)
@@ -19,6 +19,10 @@ angular.module('videoService',[])
     videoFactory.getSearchTitle = function (){
           return  $window.localStorage.getItem('search');
 
+    }
+
+    videoFactory.search = function (title) {
+        return $http.get('/apiVideo/search/'+$window.localStorage.token+'/'+title);
     }
 
     return videoFactory;

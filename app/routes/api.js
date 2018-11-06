@@ -1,10 +1,12 @@
 const User = require('../models/user');
+const UserLog = require('../models/userLog');
+const UserHistory = require('../models/userHistory');
 let config = require('../../config');
 let validator = require('email-validator');
 const ytSearch = require('yt-search');
 const Youtube = require('youtube-stream-url');
 const YouTube2 = require('simple-youtube-api');
-const youtube = new YouTube2('your api key');
+const youtube = new YouTube2('AIzaSyBXPHBDbxvRVBWtc_9AkDHiRtAk0q2ms_o');
 let fs = require('fs');
 const ytdl = require('ytdl-core');
 const vidl = require('vimeo-downloader');
@@ -18,6 +20,9 @@ let secretKey = config.secretKey;
 
 //for creating tokens
 let jsonwebtoken = require('jsonwebtoken');
+
+//user
+let userConnected;
 
 function createToken(user) {
     let token = jsonwebtoken.sign({
@@ -36,73 +41,6 @@ function createToken(user) {
 module.exports = function (app, express, io) {
     let api = express.Router();
 
-    api.get('/streamYoutube/:search', function (req, res) {
-        let search = req.params.search;
-        console.log(search);
-        res.writeHead(200, {'Content-Type': 'video/mp4'});
-        youtube.searchVideos(search, 1)
-            .then(function (results) {
-                console.log(`The video's title is ${results[0].title}`);
-
-                ytdl(results[0].url)
-                    .pipe(res);
-
-            })
-            .catch(console.log);
-
-    })
-
-    api.get('/streamVimeo/:search', function (req, res) {
-        let search = req.params.search;
-
-        search = search.replace(/ /g,"+");
-        console.log(search);
-
-        res.writeHead(200, {'Content-Type': 'video/mp4'});
-            client.request(/*options*/{
-            // This is the path for the videos contained within the staff picks
-            // channels
-            path: '/videos?query='+search,
-            // This adds the parameters to request page two, and 10 items per
-            // page
-
-                query: {
-                    page: 1
-                }
-
-        }, /*callback*/function (error, body, status_code, headers) {
-            if (error) {
-                console.log('error');
-                console.log(error);
-            } else {
-                /*Stream the video to the res*/
-
-                let stream = vidl(body.data[0].link, {quality: '360p'});
-
-                stream.pipe(res);
-
-                stream.on('error', function (err) {
-                    console.error(err);
-                    console.info("Steam emit the error")
-                });
-
-                stream.on('data', function (chunk) {
-                });
-
-                stream.on('end', function () {
-                    console.log('Finished');
-                });
-            }
-
-            // console.log('status code');
-            // console.log(status_code);
-            // console.log('headers');
-            // console.log(headers);
-        });
-
-
-
-    })
 
 
     api.post('/checkEmail', function (req, res) {
@@ -156,14 +94,37 @@ module.exports = function (app, express, io) {
                 } else {
                     //Create a token for the login
                     let token = createToken(user);
-
+                    userConnected = user;
                     res.json({
                         success: true,
-                        message: "Successfully logged in !",
+                        message: "Successfully logged in !" + (new Date()).toLocaleString(),
                         token: token
                     });
+
+                    //save date and time for login
+                    dateLogin = (new Date()).toLocaleString();
+                    let userLoginDate = new UserLog({
+                        username: user.username,
+                        log_In: dateLogin,
+                        log_Out: "not yet"
+                    });
+
+                    userLoginDate.save();
+
                 }
             }
+        });
+    });
+
+    api.post('/logoutDate', function (req, res) {
+
+        let myquery = {username: userConnected.username, log_In: dateLogin};
+        let newvalues = {$set: {log_Out: (new Date().toLocaleString())}};
+        UserLog.updateOne(myquery, newvalues, function (err) {
+            if (err)
+                res.json({message: 'err'});
+            else
+                res.json({message: 'logout date is saved'});
         });
     });
 
@@ -193,6 +154,26 @@ module.exports = function (app, express, io) {
 
     //Destination B here !
 
+    api.get('/userhistorys', function (req, res) {
+        UserHistory.find({username: req.decoded.username}, function (err, userHis) {
+            if (err) {
+                res.send(err);
+                return;
+            }
+            res.json(userHis);
+        });
+    });
+
+    api.post('/userhistorysParam', function (req,res) {
+        UserHistory.find({username: req.body.username}, function (err, userHis) {
+            if (err) {
+                res.json(err);
+                return;
+            }
+            if(userHis.length==0) res.json({request_Video:'No Date',request_date:'No Date'});
+            else res.json(userHis);
+        });
+    });
 
     api.get('/me', function (req, res) {
         res.json(req.decoded);
@@ -208,6 +189,38 @@ module.exports = function (app, express, io) {
         });
     });
 
+    api.post('/user', function (req, res) {
+        User.find({username: req.body.username}, function (err, user) {
+            if (err) {
+                res.send(err);
+                return;
+            }
+
+            res.json(user);
+        });
+    });
+
+    api.get('/userLoggs', function (req, res) {
+        UserLog.find({username: req.decoded.username}, function (err, userLoggs) {
+            if (err) {
+                res.send(err);
+                return;
+            }
+
+            res.json(userLoggs);
+        });
+    });
+
+    api.post('/searchUserLoggs', function (req, res) {
+        UserLog.find({username: req.body.username}, function (err, userLoggs) {
+            if (err) {
+                res.send(err);
+                return;
+            }
+            res.json(userLoggs);
+        });
+    });
+
     //ATTENTION : FAILLE => il faut privilégier cette méthode à l'administrateur seul
     api.post('/deleteUser', function (req, res) {
         User.deleteOne({username: req.body.username}, function (err) {
@@ -218,47 +231,25 @@ module.exports = function (app, express, io) {
         });
     });
 
-    /*------------------------------------------------------------------------------------*/
-    /* /!*Méthodes pour video*!/
-     api.post('/videoSearch', function (req, res) {
-         let search = req.body.title;
-         ytSearch(search, function (err, r) {
-             if (err) throw err;
+    api.post('/updateUser', function (req, res) {
+        //quand l utilisateur change son email il faut affecter le changement dans tout les bases de données ou collections
+        let myquery = {_id: req.decoded.id};
+        let newvalues = {$set: {name: req.body.name, username: req.body.email}};
+        User.updateOne(myquery, newvalues, function (err) {
+            if (err)
+                console.log(err);
+            else
+                res.json({message: 'User has been modified'});
+        });
+        let myquery2 = {username: req.decoded.username};
+        let newvalues2 = {$set: {username: req.body.email}};
+        UserHistory.updateMany(myquery2, newvalues2);
 
-             const videos = r.videos;
-             // const playlists = r.playlists;
-             // const accounts = r.accounts;
+        let myquery3 = {username: req.decoded.username};
+        let newvalues3 = {$set: {username: req.body.email}};
+        UserLog.updateMany(myquery3, newvalues3);
 
-             const firstResult = videos[0];
-             const resultId = firstResult.videoId;
-
-             console.log(resultId);
-
-             Youtube.getInfo({url: "https://www.youtube.com/watch?v=" + resultId})
-                 .then(function (video) {
-                     if(video){
-                         res.json({
-                             url: video.formats[0].url
-                         })
-                     }
-                 });
-         })
-     })
-
-     api.post('/youtubeSearch',function (req,res) {
-         youtube.searchVideos(req.body.search, 1)
-             .then(function(results) {
-                 console.log(`The video's title is ${results[0].title}`);
-
-
-                 ytdl(results[0].url)
-                     .pipe(res);
-
-             })
-             .catch(console.log);
-     })
- */
-
+    });
 
     return api
 };

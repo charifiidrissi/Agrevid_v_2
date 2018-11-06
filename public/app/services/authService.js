@@ -18,7 +18,8 @@ angular.module('authService',[])
           })
     }
 
-    authFactory.logout = function(){
+    authFactory.logout = function(user){
+        return $http.post('/api/logoutDate',user);
         AuthToken.setToken();
     }
 

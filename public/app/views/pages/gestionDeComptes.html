@@ -1,4 +1,90 @@
-<div class="container">
+
+
+<div class="container" ng-controller="UserController as user">
+
+    <p ng-if="user.isUpdate"> votre compte a bien été modifier </p>
+
+
+    <form  method="post" ng-submit="user.updateUser()">
+        <div class="form-group">
+            <label class="control-label col-sm-2" >Nom:</label>
+            <div class="col-sm-10">
+                <input  type="text"  id="nom"  name="nom"  placeholder="{{main.user.name}}" ng-model="user.userData.name">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="control-label col-sm-2">Email:</label>
+            <div class="col-sm-10">
+                <input  type="email"  id="email"  name="email" placeholder={{main.user.username}} ng-model="user.userData.email">
+            </div>
+        </div>
+        <button type="submit" class="btn btn-danger" > modifier </button>
+    </form>
+</div>
+
+
+
+<div class="container" ng-controller="UserController">
+    <h2>Historique </h2>
+
+    <table class="table table-striped" >
+        <thead>
+        <tr>
+            <th>vedio</th>
+            <th>date</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr ng-repeat="each in dataHistoriqueUser.slice(((currentPage-1)*itemsPerPage), ((currentPage)*itemsPerPage))">
+            <th>{{each.request_Video}}</th>
+
+            <th>{{each.request_date}}</th>
+        </tr>
+
+        </tbody>
+    </table>
+
+
+    <pagination total-items="totalItemsHistoriqueUser"
+                ng-model="currentPage"
+                max-size="maxSize"
+                class="pagination-sm"
+                boundary-links="true"
+                rotate="false"
+                items-per-page="itemsPerPage">
+
+    </pagination>
+
+
+
+    <br><br>
+    <button type="button" onclick="fonctiondeDesacivationActivation()" class="btn btn-danger">Desactiver compte</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!--<div class="container">
     <li><b>Nom</b> : {{main.user.name}}</li>
     <li><b>Email</b> : {{main.user.username}}</li>
 </div>
+-->

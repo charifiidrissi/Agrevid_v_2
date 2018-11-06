@@ -100,7 +100,12 @@ angular.module('mainCtrl', [])
 
 
         vm.doLogout = function () {
-            Auth.logout();
+            Auth.logout().success(function (res) {
+                let response = res;
+
+                console.log(response.message);
+
+            });
             vm.isAdmin = false;
             $window.localStorage.setItem('token', '');
             $location.path('/logout');

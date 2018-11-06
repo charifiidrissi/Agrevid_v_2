@@ -1,19 +1,101 @@
 angular.module('userCtrl',['userService'])
 
-.controller('UserController',function(User){
+.controller('UserController',function(User,Auth,$location,$window,$scope){
     let vm = this;
-
+    vm.isUpdate = false;
+    vm.historys = [];
+    vm.loggs = [];
+    vm.userSuccessfllyAdded = false;
+    vm.successDelete = false;
+    vm.HistorySearch=[];
+    //pagination
+    $scope.dataHistoriqueParam=[];
+    $scope.dataHistoriqueUser=[];
+    $scope.dataLogss=[];
+    $scope.currentPage = 1;
+    $scope.currentPageHistoriqueParam=1;
+    $scope.currentPageLoggs=1;
+    $scope.itemsPerPage = 5;
+    $scope.maxSize = 5; //Number of pager buttons to show
 
     User.all()
         .success(function (data) {
             vm.users = data;
         })
 
+    vm.getUser = function(){
+        User.user(vm.userData).success(function (data) {
+            vm.userSearched = data;
+            vm.successDelete = false;
+        });
+
+        User.getHistorySearchParam(vm.userData)
+            .success(function (data) {
+                vm.historys = data;
+                $scope.dataHistoriqueParam = data;
+                $scope.totalItemsHistoriqueParam = vm.historys.length;
+            })
+
+        User.getLoggsParam(vm.userData)
+            .success(function (data) {
+                vm.loggs = data;
+                $scope.dataLogss =data;
+                $scope.totalItemsDataLogss = vm.loggs.length;
+
+            })
+
+    }
+
+
+    vm.isUserSuccessfullyDeleted = function () {
+
+        if(vm.successDelete) return true;
+        else return false;
+    }
+
+    vm.okdelete = function(){
+        vm.successDelete = false;
+    }
+    vm.hasHistorys = function () {
+
+        if(vm.historys.length==0) return false;
+        else if((vm.historys.length>=1)) return true;
+        return false;
+    }
+
+    vm.hasLoggs = function () {
+
+        if(vm.loggs.length==0) return false;
+        else if((vm.loggs.length>=1)) return true;
+        return false;
+    }
+
+
+    User.getHistorySearch()
+        .success(function (data) {
+            vm.HistorySearch =data;
+            $scope.dataHistoriqueUser = data;
+            $scope.totalItemsHistoriqueUser = vm.HistorySearch.length;
+        });
 
     vm.deleteUser = function(){
         User.delete(vm.userData).success(function () {
             console.log('User deleted !');
         });
+
+    };
+
+
+    vm.updateUser = function () {
+        User.update(vm.userData).success(function () {
+
+            $window.localStorage.setItem('token', '');
+            $location.path('/login');
+            $window.alert("votre compte a bien été modifier clicker ok pour se connecter");
+
+
+        });
+
 
     };
 
@@ -23,6 +105,14 @@ angular.module('userCtrl',['userService'])
 .controller('UserCreateController',function(User,$location,$window){
     let vm = this;
 
+    vm.isUserSuccessfullyAdded = function () {
+
+        if (vm.userSuccessfllyAdded) return true;
+        else return false;
+    }
+    vm.okAdd = function () {
+        vm.userSuccessfllyAdded = false;
+    }
 
     vm.signupUser = function(){
         vm.message = '';

@@ -66,9 +66,12 @@ app.use(express.static(__dirname + '/public'));
 
 
 let api = require('./app/routes/api')(app,express,io);
+let apiVideo = require('./app/routes/apiVideo')(app,express,io);
+
 /* /api is the root of our api, means that if we want to access the signup api
 * we should type localhost:3000/api/signup */
 app.use('/api', api);
+app.use('/apiVideo', apiVideo);
 
 //the parent file of the view pages (Angular routing)
 app.get('/',function(req,res){

@@ -1,12 +1,247 @@
-<div ng-if="main.loggedIn" ng-controller="UserController as userCtrl">
-    <h1>Administration</h1>
+
+<div ng-controller="UserController as user">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div id="imaginary_container">
+                    <div class="input-group stylish-input-group" >
+
+                        <input type="text" class="form-control"  placeholder="Search" ng-model="user.userData.username">
+                        <span class="input-group-addon">
+                         <button ng-click="user.getUser()">
+                            <span class="glyphicon glyphicon-search"></span>
+                         </button>
+                        </span>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    </br></br>
+
+    <div class="container" style="width: 50%">
 
 
-    <form ng-submit="userCtrl.deleteUser()">
-        <input class="form-control input-lg" type="text" name="username" ng-model="userCtrl.userData.username"
-               placeholder="......" required>
-        <button class="btn btn-danger" type="submit">Delete</button>
-    </form>
+        <div class="panel panel-default">
+            <div class="panel-heading">detail
+                <div style=" float: left;" > </div>
+
+                <div style=" float: right;">
+
+                    <button  ng-click="user.deleteUser()">
+                        <span class="glyphicon glyphicon-trash"></span>
+                    </button>
+                    <button  ng-click="user.deleteUser()">
+                        <span class="glyphicon glyphicon-off"></span>
+                    </button>
+                    <button data-toggle="modal" data-target="#myModal">
+                        <span class="glyphicon glyphicon-plus-sign"></span>
+
+                    </button>
+
+
+                </div>
+            </div>
+
+            <!--  <form ng-submit="user.deleteUser()">
+                  <button class="btn btn-danger" type="submit">Delete</button>
+              </form> -->
+            <div class="panel-body">
+                <div class="container" style="width:100%">
+
+                    <div class="alert alert-success" ng-if="user.isUserSuccessfullyDeleted()" style="width: 500px;height: 100px;">
+                        <button type="button" ng-click="user.okdelete()" class="close" data-dismiss="alert" aria-hidden="true">
+                            ×</button>
+                        <span class="glyphicon glyphicon-ok"></span> <strong>Success Message</strong>
+                        <hr class="message-inner-separator">
+                        <p>You successfully Deleted this user .</p>
+                    </div>
+
+                    <div class="form-group" >
+                        <label class="control-label col-sm-2" for="nom2">Nom:</label>
+                        <div class="col-sm-10" ng-repeat="each in user.userSearched">
+                            <input readonly type="text" class="form-control" id="nom2"  name="nom2" value="{{each.name}}">
+                        </div>
+                    </div>
+                    <br><br>
+                    <div class="form-group">
+                        <label class="control-label col-sm-2" for="email2">Email:</label>
+                        <div class="col-sm-10" ng-repeat="each in user.userSearched">
+                            <input readonly type="email" class="form-control" id="email2"  name="email2" value="{{each.username}}">
+                        </div>
+                    </div>
+                    <br>
+                    <br>
+                    <label class="control-label col-sm-2" >role :</label>
+                    <label ng-if="user.isAdmin()">Admin</label>
+                    <label ng-if="!user.isAdmin()">Utilisateur</label>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <br>
+    <br>
+    <div class="container" style="width: 50%">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Historique</div>
+            <div class="panel-body" ng-if="user.hasHistorys()">
+                <div class="container" style="width:100%">
+
+
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>vedio</th>
+                            <th>date</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="each in dataHistoriqueParam.slice(((currentPageHistoriqueParam-1)*itemsPerPage), ((currentPageHistoriqueParam)*itemsPerPage))">
+                            <td>{{each.request_Video}}</td>
+                            <td>{{each.request_date}}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                    <pagination total-items="totalItemsHistoriqueParam"
+                                ng-model="currentPageHistoriqueParam"
+                                max-size="maxSize"
+                                class="pagination-sm"
+                                boundary-links="true"
+                                rotate="false"
+                                items-per-page="itemsPerPage">
+
+                    </pagination>
+
+                </div>
+            </div>
+            <div class="panel-body" ng-if="!user.hasHistorys()"> <p>No Historique</p></div>
+        </div>
+    </div>
+
+    <div class="container" style="width: 50%">
+
+        <div class="panel panel-default">
+            <div class="panel-heading">Logs</div>
+            <div class="panel-body" ng-if="user.hasLoggs()">
+                <div class="container" style="width:100%" >
+
+
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+
+                            <th>conexion</th>
+                            <th>deconexion</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="each in dataLogss.slice(((currentPageLoggs-1)*itemsPerPage), ((currentPageLoggs)*itemsPerPage))">
+
+                            <td>{{each.log_In}}</td>
+                            <td>{{each.log_Out}}</td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                    <pagination total-items="totalItemsDataLogss"
+                                ng-model="currentPageLoggs"
+                                max-size="maxSize"
+                                class="pagination-sm"
+                                boundary-links="true"
+                                rotate="false"
+                                items-per-page="itemsPerPage">
+
+                    </pagination>
+                </div>
+
+            </div>
+            <div class="panel-body" ng-if="!user.hasLoggs()"><p>No Loggs</p></div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <!-- Modal -->
+    <div id="myModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content" style="width:70%" ng-controller="UserCreateController as user">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <div class="modal-header">
+
+                    <h4 class="modal-title" ng-if="!user.isUserSuccessfullyAdded()">Add User</h4>
+                    <div class="alert alert-success" ng-if="user.isUserSuccessfullyAdded()">
+                        <button type="button" ng-click="user.okAdd()" class="close" data-dismiss="alert" aria-hidden="true">
+                            ×</button>
+                        <span class="glyphicon glyphicon-ok"></span> <strong>Success Message</strong>
+                        <hr class="message-inner-separator">
+                        <p>You successfully added a new user as .</p>
+                        <p ng-if="user.userNew.admin"> Admin</p>
+                        <p ng-if="!user.userNew.admin">Simple user</p>
+
+
+                    </div>
+                </div>
+
+                <div class="modal-body">
+                    <form class="form-signin" method="post" ng-submit="user.addUser()">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <input  type="text" class="form-control" name="name"  ng-model="user.userNew.name" required>
+                        </div>
+                        <br>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <input  type="text" class="form-control"  name="username" ng-model="user.userNew.username"
+                                    required>
+                        </div>
+                        <br>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input  type="password" class="form-control"  name="password"
+                                    ng-model="user.userNew.password" required>
+                        </div>
+                        <br>
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                            <input  type="password" class="form-control"  name="passConfirm"
+                                    ng-model="user.userNew.passConfirm" required>
+                        </div>
+                        <br>
+                        <span class="label label-danger">Role d'utilisation</span>
+                        <br>
+
+                        <div class="checkbox">
+                            <label><input type="checkbox" name="admin" ng-model="user.userNew.admin"> Admin</label>
+
+
+                        </div>
+                        <button type="submit" class="btn btn-danger">Add</button>
+
+                    </form>
+                </div>
+
+
+                <div class="modal-footer">
+                </div>
+
+            </div>
+
+        </div>
+    </div>
 
 </div>
-
