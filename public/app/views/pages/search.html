@@ -1,9 +1,25 @@
-<div>
-    <div class="list-group"  ng-repeat="x in video.youtubeVideos">
+<div style="float: left">
+    <div  class="list-group" ng-repeat="x in video.youtubeVideos">
         <!--<a class="list-group-item list-group-item-action" ng-repeat="x in video.youtubeVideos" href="{{'https://www.youtube.com/watch?v='+x.id}}">{{x.title}}
             <-&#45;&#45;&#45;&#45;</a>-->
-        <button  class="list-group-item list-group-item-action" ng-click="video.streamYoutubeVideo(x)">{{x.title}}
-            <-----</button>
-        <img style="width: 320; height: 180;" src="{{x.raw.snippet.thumbnails.medium.url}}" ng-click="video.streamYoutubeVideo(x)">
+        <button style="width: 320px;" class="list-group-item list-group-item-action" ng-click="video.streamYoutubeVideo(x)">
+            {{x.title}}
+        </button>
+
+        <img style="width: 320px; height: 180px;" src="{{x.raw.snippet.thumbnails.medium.url}}"
+             ng-click="video.streamYoutubeVideo(x)">
+    </div>
+
+</div>
+
+<div style="float: left; margin-left: 500px;">
+    <div class="list-group" ng-repeat="y in video.vimeoVideos">
+
+        <button style="width: 320px;" class="list-group-item list-group-item-action" ng-click="video.streamVimeoVideo(y)">
+            {{y.name}}
+        </button>
+
+        <img style="width: 320px; height: 180px;" src="{{y.pictures.sizes[3].link}}"
+             ng-click="video.streamVimeoVideo(y)">
     </div>
 </div>

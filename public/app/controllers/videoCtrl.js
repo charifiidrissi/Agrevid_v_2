@@ -10,6 +10,7 @@ angular.module('videoCtrl', ['videoService'])
         vm.searchTitle = Video.getSearchTitle();
         vm.token = AuthToken.getToken();
         vm.youtubeVideos = [];
+        vm.vimeoVideos = [];
 
         //trustSrc pour qu'Angular ne bloque pas les sources non fiables (externes)
         vm.trustSrc = function (src) {
@@ -20,6 +21,10 @@ angular.module('videoCtrl', ['videoService'])
         //méthode déclanchée lors de la recherche de video
         vm.doSearch = function () {
 
+            Video.searchVimeoVideo(vm.search.title).then(function(res){
+                vm.vimeoVideos = res.data.results;
+                console.log(vm.vimeoVideos);
+            });
 
             Video.searchYoutubeVideo(vm.search.title).then(function (res) {
 
@@ -36,12 +41,14 @@ angular.module('videoCtrl', ['videoService'])
                 }
                 // $localStorage.put('search',"https://agrevid.com:3000/api/streamVideo/"+vm.search.title);
                 Video.search(vm.search.title);
-                Video.setSearchTitle(vm.search.title);
+                // Video.setSearchTitle(vm.search.title);
 
                 $route.reload();
 
 
             });
+
+
 
 
         }
@@ -50,6 +57,13 @@ angular.module('videoCtrl', ['videoService'])
             vm.url = video.id;
             vm.title = video.title;
             $location.path('/video');
+            $route.reload();
+        }
+
+        vm.streamVimeoVideo = function (video) {
+            vm.url = video.link.substr(18);
+            vm.title = video.name;
+            $location.path('/videoVimeo');
             $route.reload();
         }
 

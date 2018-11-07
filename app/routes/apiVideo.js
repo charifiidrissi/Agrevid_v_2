@@ -52,39 +52,34 @@ module.exports = function (app, express, io) {
         }
     })
 
-    api.get('/streamYoutube/:search', function (req, res) {
 
-        /*****************************/
+
+
+
+    /*méthode qui cherche les videos de youtube*/
+    api.get('/searchYoutubeVideos/:search', function (req, res) {
 
         let search = req.params.search;
         console.log(search);
-        res.writeHead(200, {'Content-Type': 'video/mp4'});
-        youtube.searchVideos(search, 1)
+        //res.writeHead(200, {'Content-Type': 'video/mp4'});
+        youtube.searchVideos(search, 25)
             .then(function (results) {
-
-
-                console.log(`The video's url is ${results[0].url}`);
-
-                ytdl(results[0].url)
-                    .pipe(res);
+                res.json({
+                    results
+                });
             })
             .catch(console.log);
 
-        /*****************************/
-
     })
 
-    api.get('/streamVimeo/:search', function (req, res) {
-
-
+    /*méthode qui cherche les videos de vimeo*/
+    api.get('/searchVimeoVideos/:search', function (req, res) {
         let search = req.params.search;
 
 
         search = search.replace(/ /g, "+");
         console.log(search);
 
-
-        res.writeHead(200, {'Content-Type': 'video/mp4'});
         client.request(/*options*/{
             // This is the path for the videos contained within the staff picks
             // channels
@@ -101,55 +96,41 @@ module.exports = function (app, express, io) {
                 console.log('error');
                 console.log(error);
             } else if (body && body.data[0] && body.data[0].link) {
-                /*Stream the video to the res*/
-
-                let stream = vidl(body.data[0].link, {quality: '360p'});
-
-                stream.pipe(res);
-
-                stream.on('error', function (err) {
-                    console.error(err);
-                    console.info("Steam emit the error")
-                });
-
-                stream.on('data', function (chunk) {
-                });
-
-                stream.on('end', function () {
-                    console.log('Finished');
-                });
+                res.json({results: body.data});
             }
 
-            // console.log('status code');
-            // console.log(status_code);
-            // console.log('headers');
-            // console.log(headers);
-        });
-
-
-    })
-
-
-    /*méthode qui cherche les videos de youtube*/
-    api.get('/searchYoutubeVideos/:search', function (req, res) {
-
-        let search = req.params.search;
-        console.log(search);
-        //res.writeHead(200, {'Content-Type': 'video/mp4'});
-        youtube.searchVideos(search, 10)
-            .then(function (results) {
-                res.json({
-                    results
-                });
-            })
-            .catch(console.log);
-
+        })
     })
 
     /*méthode qui stream la video de youtube*/
     api.get('/watchYoutubeVideo/:url', function (req, res) {
         let url = req.params.url;
         ytdl('https://www.youtube.com/watch?v='+url).pipe(res);
+    })
+
+    /*méthode qui stream la video de vimeo*/
+    api.get('/watchVimeoVideo/:url', function (req, res) {
+        let url = req.params.url;
+        if (url) {
+            url = 'https://vimeo.com/'+url;
+            /*Stream the video to the res*/
+
+            let stream = vidl(url, {quality: '360p'});
+
+            stream.pipe(res);
+
+            stream.on('error', function (err) {
+                console.error(err);
+                console.info("Steam emit the error")
+            });
+
+            stream.on('data', function (chunk) {
+            });
+
+            stream.on('end', function () {
+                console.log('Finished');
+            });
+        }
     })
 
     return api
