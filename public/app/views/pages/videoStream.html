@@ -1,5 +1,3 @@
-
-
 <!--<div class="vid-container" ng-controller="VideoController as v">
     <h2>Video from youtube</h2>
     <video id="vid_frame" controls controlsList="nodownload" src="{{'/apiVideo/streamYoutube/'+v.searchTitle}}" type="video/mp4" frameborder="0" width="560" height="275"></video>
@@ -8,7 +6,17 @@
 
 </div>-->
 
-<div class="vid-container">
+<div style="float: left;
+      position: relative;
+      left: 35%;" class="vid-container">
+    <div style="float: left;
+      position: relative;
+      left: -45%;">
+
+
     <h3>{{video.title}}</h3>
-    <video id="vid_frame" controls controlsList="nodownload" src="{{'/apiVideo/watchYoutubeVideo/'+video.url}}" type="video/mp4" frameborder="0" width="560" height="275"></video>
+    <video id="vid_frame" controls controlsList="nodownload" src="{{'/apiVideo/watchYoutubeVideo/'+video.url}}"
+           type="video/mp4" frameborder="0" width="1000" height="491"></video>
+
+    </div>
 </div>
