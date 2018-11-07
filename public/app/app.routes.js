@@ -32,6 +32,10 @@ angular.module('appRoutes',['ngRoute'])
             templateUrl: 'app/views/pages/videoStream.html'
         })
 
+        .when('/search',{
+            templateUrl: 'app/views/pages/search.html'
+        })
+
         .otherwise('/');
 
     $locationProvider.html5Mode(true);

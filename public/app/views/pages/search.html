@@ -1,0 +1,9 @@
+<div>
+    <div class="list-group"  ng-repeat="x in video.youtubeVideos">
+        <!--<a class="list-group-item list-group-item-action" ng-repeat="x in video.youtubeVideos" href="{{'https://www.youtube.com/watch?v='+x.id}}">{{x.title}}
+            <-&#45;&#45;&#45;&#45;</a>-->
+        <button  class="list-group-item list-group-item-action" ng-click="video.streamYoutubeVideo(x)">{{x.title}}
+            <-----</button>
+        <img style="width: 320; height: 180;" src="{{x.raw.snippet.thumbnails.medium.url}}" ng-click="video.streamYoutubeVideo(x)">
+    </div>
+</div>

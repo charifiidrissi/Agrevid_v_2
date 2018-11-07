@@ -28,7 +28,7 @@ module.exports = function (app, express, io) {
     api.get('/search/:token/:search', function (req, res) {
         let token = req.params.token;
         let search = req.params.search;
-        console.log('the token ---->'+token);
+        console.log('the token ---->' + token);
         //check if token exist
         if (token) {
             jsonwebtoken.verify(token, secretKey, function (err, decoded) {
@@ -52,114 +52,105 @@ module.exports = function (app, express, io) {
         }
     })
 
-    api.get('/streamYoutube/:search/:token', function (req, res) {
-        let token = req.params.token;
-        console.log(token);
-        //check if token exist
-        if (token) {
-            jsonwebtoken.verify(token, secretKey, function (err, decoded) {
-                if (err) {
-                    res.status(403).send({success: false, message: "Failed to authenticate user"});
-                } else {
-                    //all the info of user is down here after authentication
-                    req.decoded = decoded;
+    api.get('/streamYoutube/:search', function (req, res) {
 
-                    /*****************************/
+        /*****************************/
 
-                    let search = req.params.search;
-                    console.log(search);
-                    res.writeHead(200, {'Content-Type': 'video/mp4'});
-                    youtube.searchVideos(search, 1)
-                        .then(function (results) {
+        let search = req.params.search;
+        console.log(search);
+        res.writeHead(200, {'Content-Type': 'video/mp4'});
+        youtube.searchVideos(search, 1)
+            .then(function (results) {
 
 
-                            console.log(`The video's title is ${results[0].title}`);
+                console.log(`The video's url is ${results[0].url}`);
 
-                            ytdl(results[0].url)
-                                .pipe(res);
-                        })
-                        .catch(console.log);
+                ytdl(results[0].url)
+                    .pipe(res);
+            })
+            .catch(console.log);
 
-                    /*****************************/
-                }
-            });
-        } else {
-            res.status(403).send({success: false, message: "No token provided"});
-        }
+        /*****************************/
+
+    })
+
+    api.get('/streamVimeo/:search', function (req, res) {
+
+
+        let search = req.params.search;
+
+
+        search = search.replace(/ /g, "+");
+        console.log(search);
+
+
+        res.writeHead(200, {'Content-Type': 'video/mp4'});
+        client.request(/*options*/{
+            // This is the path for the videos contained within the staff picks
+            // channels
+            path: '/videos?query=' + search,
+            // This adds the parameters to request page two, and 10 items per
+            // page
+
+            query: {
+                page: 1
+            }
+
+        }, /*callback*/function (error, body, status_code, headers) {
+            if (error) {
+                console.log('error');
+                console.log(error);
+            } else if (body && body.data[0] && body.data[0].link) {
+                /*Stream the video to the res*/
+
+                let stream = vidl(body.data[0].link, {quality: '360p'});
+
+                stream.pipe(res);
+
+                stream.on('error', function (err) {
+                    console.error(err);
+                    console.info("Steam emit the error")
+                });
+
+                stream.on('data', function (chunk) {
+                });
+
+                stream.on('end', function () {
+                    console.log('Finished');
+                });
+            }
+
+            // console.log('status code');
+            // console.log(status_code);
+            // console.log('headers');
+            // console.log(headers);
+        });
 
 
     })
 
-    api.get('/streamVimeo/:search/:token', function (req, res) {
 
-        let token = req.params.token;
-        //check if token exist
-        if (token) {
-            jsonwebtoken.verify(token, secretKey, function (err, decoded) {
-                if (err) {
-                    res.status(403).send({success: false, message: "Failed to authenticate user"});
-                } else {
-                    //all the info of user is down here after authentication
-                    req.decoded = decoded;
+    /*méthode qui cherche les videos de youtube*/
+    api.get('/searchYoutubeVideos/:search', function (req, res) {
 
-                    let search = req.params.search;
-
-
-                    search = search.replace(/ /g, "+");
-                    console.log(search);
-
-
-                    res.writeHead(200, {'Content-Type': 'video/mp4'});
-                    client.request(/*options*/{
-                        // This is the path for the videos contained within the staff picks
-                        // channels
-                        path: '/videos?query=' + search,
-                        // This adds the parameters to request page two, and 10 items per
-                        // page
-
-                        query: {
-                            page: 1
-                        }
-
-                    }, /*callback*/function (error, body, status_code, headers) {
-                        if (error) {
-                            console.log('error');
-                            console.log(error);
-                        } else if (body && body.data[0] && body.data[0].link) {
-                            /*Stream the video to the res*/
-
-                            let stream = vidl(body.data[0].link, {quality: '360p'});
-
-                            stream.pipe(res);
-
-                            stream.on('error', function (err) {
-                                console.error(err);
-                                console.info("Steam emit the error")
-                            });
-
-                            stream.on('data', function (chunk) {
-                            });
-
-                            stream.on('end', function () {
-                                console.log('Finished');
-                            });
-                        }
-
-                        // console.log('status code');
-                        // console.log(status_code);
-                        // console.log('headers');
-                        // console.log(headers);
-                    });
-
-                }
-            });
-        } else {
-            res.status(403).send({success: false, message: "No token provided"});
-        }
-
+        let search = req.params.search;
+        console.log(search);
+        //res.writeHead(200, {'Content-Type': 'video/mp4'});
+        youtube.searchVideos(search, 10)
+            .then(function (results) {
+                res.json({
+                    results
+                });
+            })
+            .catch(console.log);
 
     })
 
+    /*méthode qui stream la video de youtube*/
+    api.get('/watchYoutubeVideo/:url', function (req, res) {
+        let url = req.params.url;
+        ytdl('https://www.youtube.com/watch?v='+url).pipe(res);
+    })
 
     return api
 };

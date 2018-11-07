@@ -21,8 +21,13 @@ angular.module('videoService',[])
 
     }
 
+
     videoFactory.search = function (title) {
         return $http.get('/apiVideo/search/'+$window.localStorage.token+'/'+title);
+    }
+
+    videoFactory.searchYoutubeVideo = function(title){
+        return $http.get('/apiVideo/searchYoutubeVideos/'+title);
     }
 
     return videoFactory;
