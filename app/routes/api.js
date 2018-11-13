@@ -257,7 +257,7 @@ module.exports = function (app, express, io) {
             UserHistory.find({idUser: user._id}, function (err, userHis) {
                 if (err) {
                     res.json(err);
-                    return;
+
                 }
                 if(userHis.length==0) res.json({request_Video:'No Date',request_date:'No Date'});
                 else res.json(userHis);
