@@ -76,9 +76,15 @@
                     </div>
                     <br>
                     <br>
-                    <label class="control-label col-sm-2" >role :</label>
-                    <label ng-if="user.isAdmin()">Admin</label>
-                    <label ng-if="!user.isAdmin()">Utilisateur</label>
+                    <label class="control-label col-sm-2" >role : </label>
+
+                    <div ng-repeat="each in user.userSearched">
+                       <div  ng-if="each.admin"> <p>Admin</p></div>
+
+                       <div  ng-if="!each.admin"> <p>Utilisateur</p></div>
+
+                   </div>
+
 
                 </div>
 

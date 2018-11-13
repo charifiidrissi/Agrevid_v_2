@@ -1,7 +1,7 @@
 module.exports = {
-    "database": "mongodb://localhost:27017/userstory",
-    "userHistoryDb" : "mongodb://localhost:27017/user_history_db",
-    "userLogDb" : "mongodb://localhost:27017/user_log_db",
+    "database": "mongodb://agredivroot:abc123@ds016128.mlab.com:16128/userstory",
+    "userHistoryDb" : "mongodb://agredivroot:abc123@ds141813.mlab.com:41813/user_history_db",
+    "userLogDb" : "mongodb://agredivroot:abc123@ds155833.mlab.com:55833/user_log_db",
     "port": process.env.PORT || 3000,
     "secretKey" : "YourSecretKey",
     "CLIENT_ID" : "a124ef69255390201ab6ceb4704bfdd9153170c0",

@@ -8,6 +8,7 @@ angular.module('userCtrl',['userService'])
     vm.userSuccessfllyAdded = false;
     vm.successDelete = false;
     vm.HistorySearch=[];
+    $scope.is_Admin= false;
     //pagination
     $scope.dataHistoriqueParam=[];
     $scope.dataHistoriqueUser=[];
@@ -26,8 +27,9 @@ angular.module('userCtrl',['userService'])
     vm.getUser = function(){
         User.user(vm.userData).success(function (data) {
             vm.userSearched = data;
+            $scope.is_Admin = vm.userSearched.admin;
             vm.successDelete = false;
-        });
+        })
 
         User.getHistorySearchParam(vm.userData)
             .success(function (data) {
@@ -46,6 +48,12 @@ angular.module('userCtrl',['userService'])
 
     }
 
+    vm.ifAdmin = function () {
+
+        if($scope.is_Admin ==true) return true;
+        else return false ;
+
+    }
 
     vm.isUserSuccessfullyDeleted = function () {
 
@@ -98,6 +106,23 @@ angular.module('userCtrl',['userService'])
 
 
     };
+
+    vm.updateUserPass = function () {
+        User.updateUserPass(vm.userData).success(function () {
+
+            $window.localStorage.setItem('token', '');
+            $location.path('/login');
+            $window.alert("votre compte a bien été modifier clicker ok pour se connecter");
+
+
+        });
+
+
+    };
+
+
+
+
 
 })
 
@@ -175,6 +200,72 @@ angular.module('userCtrl',['userService'])
                         $window.localStorage.setItem('token',response.data.token);
                         $location.path('/');
                     })
+        })
+
+    }
+
+    vm.addUser = function(){
+        vm.message = '';
+
+        User.checkEmail(vm.userNew).success(function (res) {
+            let response = res;
+            let charInterdits = ["\""," "];
+            let majuscules = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
+            let majCheck = false;
+            let regExLettres = new RegExp('^[a-zA-Z]*$');
+
+            if(!regExLettres.test(vm.userNew.name)){
+                $window.alert("le nom ne peut contenir que des lettres !");
+                return;
+            }
+
+            if(!response.checked){
+                $window.alert("Email invalide !");
+                return;
+            }
+
+            if(vm.userNew.password.length < 8){
+                $window.alert("Le mot de passe doit contenir au moins 8 charactères");
+                return;
+            }
+
+            for(let i=0; i<charInterdits.length; i++){
+                if(vm.userNew.password.includes(charInterdits[i])){
+                    if(charInterdits[i] == " "){
+                        $window.alert("Le mot de passe ne doit pas contenir des espaces");
+                        return;
+                    }
+
+                    $window.alert("Le mot de passe ne doit pas contenir des "+charInterdits[i]);
+                    return;
+                }
+            }
+
+            for(let j=0; j<majuscules.length; j++){
+                if(vm.userNew.password.includes(majuscules[j])) {
+                    majCheck = true;
+                }
+            }
+
+            if(majCheck == false){
+                $window.alert("Le mot de passe doit contenir au moins une majuscule !");
+                return;
+            }
+
+            if(vm.userNew.password != vm.userNew.passConfirm){
+                $window.alert("Les mots de passes ne sont pas identiques !" + vm.userNew.admin);
+                return;
+            }
+
+
+            User.create(vm.userNew)
+                .then(function(response){
+                    vm.userNew = {};
+                    vm.userSuccessfllyAdded= true;
+
+
+
+                })
         })
 
     }

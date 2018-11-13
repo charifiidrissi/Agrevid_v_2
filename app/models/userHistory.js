@@ -8,7 +8,6 @@ let Schema = mongoose.Schema;
 //the Schema
 let UserHistorySchema = new Schema({
     idUser : String,
-    username: String,
     request_Video : {type : String, required: true  },
     request_date : {type : Date, defauly :Date.now }
 });

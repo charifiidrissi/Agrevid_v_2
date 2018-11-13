@@ -1,3 +1,4 @@
+
 <div class="container" ng-controller="MainController as login">
     <div class="row">
         <div class="col-sm-5 col-md-4 col-md-offset-4">
@@ -6,7 +7,51 @@
                 Email : <input class="form-control" type="text" name="username" ng-model="login.loginData.username">
                 Mot de passe : <input  class="form-control" type="password" name="password" ng-model="login.loginData.password">
                 <button type="submit" class="btn btn-success">Se connecter</button>
+
             </form>
+            <!-- Trigger the modal with a button -->
+            <a  data-toggle="modal" data-target="#myModal" >Mots de passs oublié ? </a>
         </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog" ng-controller="MainController as service">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Mot de Passe Perdu </h4>
+                <div ng-if="service.succedSendEmail() && service.submitOk() "  class="alert alert-success">
+                    <strong>Success!</strong> {{service.message}}.
+                </div>
+                <div ng-if="!service.succedSendEmail() && service.submitOk()" class="alert alert-warning">
+                    <strong>Warning!</strong> {{service.message}}.
+                </div>
+            </div>
+            <div class="modal-body">
+
+
+
+                        <form role="form" method="post" ng-submit="service.userSendModifyPass()">
+                            <div class="form-group">
+                                <label for="exampleInputEmail1">Adresse Email</label>
+                                <input type="email" class="form-control" ng-model="service.data.username" id="exampleInputEmail1" placeholder="Entre ton adresse Email">
+                            </div>
+
+                            <p>Renseigne ton adresse mail utilisé pour ton inscription au Agrediv et tu recevras ton mot de passe par Email.</p>
+                            <center><input type="submit" class="btn btn-default btn-danger btn-lg" value="Renvoyer le mot de passe par mail "></center>
+                        </form>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
     </div>
 </div>

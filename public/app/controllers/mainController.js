@@ -7,6 +7,9 @@ angular.module('mainCtrl', [])
 
         vm.loggedIn = Auth.isLoggedIn;
         vm.isAdmin = false;
+        vm.message;
+        vm.succed;
+        vm.submitSendPass= false;
 
         $rootScope.$on('$routeChangeStart', function () {
             vm.loggedIn = Auth.isLoggedIn();
@@ -109,6 +112,27 @@ angular.module('mainCtrl', [])
             vm.isAdmin = false;
             $window.localStorage.setItem('token', '');
             $location.path('/logout');
+        }
+
+
+        vm.userSendModifyPass = function () {
+
+
+
+            Auth.userSendModifyPass(vm.data).success(function (res) {
+                vm.message = res.message;
+                vm.succed=res.succed;
+                vm.submitSendPass=true;
+            })
+        }
+
+        vm.succedSendEmail= function () {
+
+            return vm.succed;
+        }
+
+        vm.submitOk = function () {
+            return vm.submitSendPass;
         }
 
 

@@ -30,9 +30,5 @@ angular.module('videoService',[])
         return $http.get('/apiVideo/searchYoutubeVideos/'+title);
     }
 
-    videoFactory.searchVimeoVideo = function(title){
-        return $http.get('/apiVideo/searchVimeoVideos/'+title);
-    }
-
     return videoFactory;
 });

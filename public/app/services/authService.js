@@ -31,6 +31,10 @@ angular.module('authService',[])
             }
     }
 
+    authFactory.userSendModifyPass = function(data){
+        return $http.post('/api/userSendModifyPass',data);
+    }
+
 
     authFactory.getUser = function(){
         if(AuthToken.getToken())

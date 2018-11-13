@@ -1,65 +1,164 @@
+<script type="text/javascript" src="app/stylesheet/pass.js"></script>
+
+<div class="container" style="margin-left: 300px;width:150%; ">
+    <div class="row">
+        <div class="col-sm-3 col-md-3">
+            <div class="panel-group" id="accordion">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne"><span class="glyphicon glyphicon-folder-close">
+                    </span>Change Password</a>
+                        </h4>
+                    </div>
+                    <div id="collapseOne" class="panel-collapse collapse in">
+                        <div id="demo3" class="collapse in" >
+                            <div class="container" ng-controller="UserController as user" style="width:350px;float: left;">
+                                <div class="row" >
+                                    <div class="col-sm-12" >
+
+                                        <form method="post" ng-submit="user.updateUserPass()">
+                                            <input type="password" class="input-lg form-control" name="password0" id="password0" placeholder="Old Password" autocomplete="off" ng-model="user.userData.passwordOld">
+
+                                            <input type="password" class="input-lg form-control" name="password1" id="password1" placeholder="New Password" autocomplete="off" ng-model="user.userData.passwordNew">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <span id="8char" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> 8 Characters Long<br>
+                                                    <span id="ucase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> One Uppercase Letter
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <span id="lcase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> One Lowercase Letter<br>
+                                                    <span id="num" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> One Number
+                                                </div>
+                                            </div>
+                                            <input type="password" class="input-lg form-control" name="password2" id="password2" placeholder="Repeat Password" autocomplete="off">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <span id="pwmatch" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Passwords Match
+                                                </div>
+                                            </div>
+                                            <input type="submit" id="ok" disabled="true" class="col-xs-12 btn btn-primary btn-load btn-lg" data-loading-text="Changing Password..." value="Change Password">
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                </div><!--/row-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour"><span class="glyphicon glyphicon-file">
+                    </span>Historique</a>
+                        </h4>
+                    </div>
+                    <div id="collapseFour" class="panel-collapse collapse">
+                        <div id="demo2" class="collapse in">
+                            <div class="container" ng-controller="UserController" style="width:350px ;float: left;">
 
 
-<div class="container" ng-controller="UserController as user">
+                                <table class="table table-striped" >
+                                    <thead>
+                                    <tr>
+                                        <th>vedio</th>
+                                        <th>date</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="each in dataHistoriqueUser.slice(((currentPage-1)*itemsPerPage), ((currentPage)*itemsPerPage))">
+                                        <th>{{each.request_Video}}</th>
 
-    <p ng-if="user.isUpdate"> votre compte a bien été modifier </p>
+                                        <th>{{each.request_date}}</th>
+                                    </tr>
+
+                                    </tbody>
+                                </table>
 
 
-    <form  method="post" ng-submit="user.updateUser()">
-        <div class="form-group">
-            <label class="control-label col-sm-2" >Nom:</label>
-            <div class="col-sm-10">
-                <input  type="text"  id="nom"  name="nom"  placeholder="{{main.user.name}}" ng-model="user.userData.name">
+                                <pagination total-items="totalItemsHistoriqueUser"
+                                            ng-model="currentPage"
+                                            max-size="maxSize"
+                                            class="pagination-sm"
+                                            boundary-links="true"
+                                            rotate="false"
+                                            items-per-page="itemsPerPage">
+
+                                </pagination>
+
+
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseFive"><span class="glyphicon glyphicon-heart">
+                    </span>Change info</a>
+                        </h4>
+                    </div>
+                    <div id="collapseFive" class="panel-collapse collapse">
+                        <div id="demo" class="collapse in">
+                            <div class="container" ng-controller="UserController as user" style="width:350px ;float: left;">
+
+                                <p ng-if="user.isUpdate"> votre compte a bien été modifier </p>
+
+                                <h1>Change info</h1>
+                                <form  method="post" ng-submit="user.updateUser()">
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-2" >Nom:</label>
+                                        <div class="col-sm-12">
+                                            <input  type="text"  class="input-lg form-control" id="nom"  name="nom"  placeholder="{{main.user.name}}" ng-model="user.userData.name" required>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="control-label col-sm-2">Email:</label>
+                                        <div class="col-sm-12">
+                                            <input  type="email"  class="input-lg form-control" id="email"  name="email" placeholder={{main.user.username}} ng-model="user.userData.email" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+
+                                        <button type="submit" class="col-sm-12 btn btn-primary btn-load btn-lg" > modifier </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="form-group">
-            <label class="control-label col-sm-2">Email:</label>
-            <div class="col-sm-10">
-                <input  type="email"  id="email"  name="email" placeholder={{main.user.username}} ng-model="user.userData.email">
-            </div>
-        </div>
-        <button type="submit" class="btn btn-danger" > modifier </button>
-    </form>
+
+    </div>
 </div>
 
 
 
-<div class="container" ng-controller="UserController">
-    <h2>Historique </h2>
-
-    <table class="table table-striped" >
-        <thead>
-        <tr>
-            <th>vedio</th>
-            <th>date</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr ng-repeat="each in dataHistoriqueUser.slice(((currentPage-1)*itemsPerPage), ((currentPage)*itemsPerPage))">
-            <th>{{each.request_Video}}</th>
-
-            <th>{{each.request_date}}</th>
-        </tr>
-
-        </tbody>
-    </table>
-
-
-    <pagination total-items="totalItemsHistoriqueUser"
-                ng-model="currentPage"
-                max-size="maxSize"
-                class="pagination-sm"
-                boundary-links="true"
-                rotate="false"
-                items-per-page="itemsPerPage">
-
-    </pagination>
 
 
 
-    <br><br>
-    <button type="button" onclick="fonctiondeDesacivationActivation()" class="btn btn-danger">Desactiver compte</button>
-</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -17,6 +17,10 @@ angular.module('userService',[])
         return $http.post('/api/user',userData);
     }
 
+    userFactory.getUser = function(userData){
+        return $http.post('/api/user',userData);
+    }
+
     userFactory.getHistorySearch = function () {
         return $http.get('/api/userhistorys');
     }
@@ -35,6 +39,10 @@ angular.module('userService',[])
 
     userFactory.update = function(userData){
         return $http.post('/api/updateUser',userData);
+    }
+
+    userFactory.updateUserPass = function(userData){
+        return $http.post('/api/updateUserPass',userData);
     }
 
     userFactory.checkEmail = function(userData){

@@ -1,25 +1,70 @@
-<div style="float: left">
-    <div  class="list-group" ng-repeat="x in video.youtubeVideos">
-        <!--<a class="list-group-item list-group-item-action" ng-repeat="x in video.youtubeVideos" href="{{'https://www.youtube.com/watch?v='+x.id}}">{{x.title}}
-            <-&#45;&#45;&#45;&#45;</a>-->
-        <button style="width: 320px;" class="list-group-item list-group-item-action" ng-click="video.streamYoutubeVideo(x)">
-            {{x.title}}
-        </button>
+<div style="overflow-y: auto;height: 500px;margin-left: 700px;">
+<div   class="thumbnail clearfix" ng-repeat="x in video.youtubeVideos" style="width:400px;">
+    <img src="{{x.raw.snippet.thumbnails.medium.url}}" ng-click="video.streamYoutubeVideo(x)" alt="ALT NAME" class="pull-left span2 clearfix" style='width:100px;height:100px;   margin-right:10px'>
+    <div class="caption" class="pull-left">
 
-        <img style="width: 320px; height: 180px;" src="{{x.raw.snippet.thumbnails.medium.url}}"
-             ng-click="video.streamYoutubeVideo(x)">
+        <h4>
+            <a href="#" ng-click="video.streamYoutubeVideo(x)" >{{x.title}}</a>
+        </h4>
+        <small><b>source: </b>Youtube</small>
     </div>
-
+</div>
+</div>
+<!--
+<div style="float: right">
+    <div class="list-group"  ng-repeat="x in video.youtubeVideos">
+        <!--<a class="list-group-item list-group-item-action" ng-repeat="x in video.youtubeVideos" href="{{'https://www.youtube.com/watch?v='+x.id}}">{{x.title}}
+            <-&#45;&#45;&#45;&#45;</a>
+        <button  style="width: 180px; height: 120px;" class="list-group-item list-group-item-action" ng-click="video.streamYoutubeVideo(x)">{{x.title}}
+            <-----</button>
+        <img style="width: 180px; height: 120px;" src="{{x.raw.snippet.thumbnails.medium.url}}" ng-click="video.streamYoutubeVideo(x)">
+    </div>
+</div>
+-->
+<div class="vid-container" style="position: fixed;
+  width: 600px;
+  height: 200px;
+  left: 50%;
+  top: 10%;
+  margin-left: -600px;">
+    <h3> >{{video.title}}</h3>
+    <video id="vid_frame" controls controlsList="nodownload" src="{{'/apiVideo/watchYoutubeVideo/'+video.url}}" type="video/mp4" frameborder="0" width="660" height="375"></video>
 </div>
 
-<div style="float: left; margin-left: 500px;">
-    <div class="list-group" ng-repeat="y in video.vimeoVideos">
+<button style="position: fixed;
 
-        <button style="width: 320px;" class="list-group-item list-group-item-action" ng-click="video.streamVimeoVideo(y)">
-            {{y.name}}
-        </button>
+  left: 50%;
+  top: 50%;
+  margin-left: -600px;"
+        data-toggle="modal" data-target="#myModal" data-toggle="tooltip" title="ajouter danune playlist" >
+    <span class="glyphicon glyphicon-plus-sign"></span>
 
-        <img style="width: 320px; height: 180px;" src="{{y.pictures.sizes[3].link}}"
-             ng-click="video.streamVimeoVideo(y)">
+</button>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content" style="width:70%" ng-controller="UserCreateController as user">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <div class="modal-header">
+
+                <h4 class="modal-title">Add Vidio into playlist</h4>
+            </div>
+
+            <div class="modal-body">
+                TODO:
+                 create playlist or choose a playlist already exist and add video in it
+            </div>
+
+
+            <div class="modal-footer">
+            </div>
+
+        </div>
+
     </div>
+</div>
+
 </div>

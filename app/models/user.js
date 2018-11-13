@@ -27,6 +27,8 @@ UserSchema.pre('save',function (next) {
    });
 });
 
+
+
 //Comparing the password entered with the one in the database (encrypted method)
 UserSchema.methods.comparePassword = function(password){
   let user = this;
