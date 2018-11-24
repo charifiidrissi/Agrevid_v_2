@@ -13,6 +13,11 @@ angular.module('appRoutes',['ngRoute'])
             templateUrl: 'app/views/pages/signup.html'
         })
 
+        .when('/updatePass/:token',{
+            templateUrl: 'app/views/pages/updatePass.html',
+            controller : 'UserController'
+        })
+
         .when('/administration',{
             templateUrl: 'app/views/pages/administration.html'
         })

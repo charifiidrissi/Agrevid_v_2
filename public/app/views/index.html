@@ -63,7 +63,7 @@
                     </form>
                 </li>
                 <li ng-if="main.loggedIn"><a href="#">Hello {{main.user.name}}</a></li>
-                <li ng-if="main.loggedIn"><a href="/playlist">Playlists</a></li>
+                <li ng-if="main.loggedIn"><a href="/updatePass/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjViZWExYjRjMzAwZDA0NDg2YzRiOWI0ZSIsIm5hbWUiOiJ6b3VoaXIiLCJ1c2VybmFtZSI6ImNoYXJpZmkuaWRyaXNzaS56b3VoaXJAZ21haWwuY29tIiwiYWRtaW4iOnRydWUsImlhdCI6MTU0MzAyMDA2MywiZXhwIjoxNTQzMDIzNjYzfQ.zM3BO_wp6VUXn4QjFSawY0GFmzRHRziyybbu-k320M8">Playlists</a></li>
                 <li ng-if="main.isAdmin && main.loggedIn"><a href="/administration">Administration</a></li>
                 <li ng-if="main.loggedIn"><a href="/gestion">Gestion de compte</a></li>
                 <li ng-if="main.loggedIn"><a href="#" ng-click="main.doLogout()">Déconnexion</a></li>

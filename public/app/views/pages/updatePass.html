@@ -1,0 +1,40 @@
+<script type="text/javascript" src="app/stylesheet/pass.js"></script>
+
+<div id="collapseOne" class="panel-collapse collapse in">
+    <div id="demo3" class="collapse in" >
+        <div class="container" ng-controller="UserController as user" style="width:350px;float: left;">
+            <div class="row" >
+                <div class="col-sm-12" >
+                    {{tokenUser}}
+                    <form method="post" ng-submit="user.updateUserPassToken()">
+
+
+                        <input type="password" class="input-lg form-control" name="password0" id="password0" placeholder="Code verification" autocomplete="off" ng-model="user.userData.codeV">
+
+                        <input type="password" class="input-lg form-control" name="password1" id="password1" placeholder="New Password" autocomplete="off" ng-model="user.userData.passwordNew">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <span id="8char" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> 8 Characters Long<br>
+                                <span id="ucase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> One Uppercase Letter
+                            </div>
+                            <div class="col-sm-6">
+                                <span id="lcase" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> One Lowercase Letter<br>
+                                <span id="num" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> One Number
+                            </div>
+                        </div>
+                        <input type="password" class="input-lg form-control" name="password2" id="password2" placeholder="Repeat Password" autocomplete="off">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span id="pwmatch" class="glyphicon glyphicon-remove" style="color:#FF0004;"></span> Passwords Match
+                            </div>
+                        </div>
+                        <input type="submit" id="ok" disabled="true" class="col-xs-12 btn btn-primary btn-load btn-lg" data-loading-text="Changing Password..." value="Change Password">
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+
+            </div><!--/row-->
+        </div>
+    </div>
+</div>

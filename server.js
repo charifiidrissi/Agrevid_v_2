@@ -74,7 +74,7 @@ app.use('/api', api);
 app.use('/apiVideo', apiVideo);
 
 //the parent file of the view pages (Angular routing)
-app.get('/',function(req,res){
+app.use(function(req,res){
    res.sendFile(__dirname + '/public/app/views/index.html');
 });
 

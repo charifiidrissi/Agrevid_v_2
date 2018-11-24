@@ -32,7 +32,7 @@ angular.module('authService',[])
     }
 
     authFactory.userSendModifyPass = function(data){
-        return $http.post('/api/userSendModifyPass',data);
+        return $http.post('/api/userSendModifyPassToken',data);
     }
 
 
@@ -47,11 +47,15 @@ angular.module('authService',[])
 })
 
 
-.factory('AuthToken',function($window){
+.factory('AuthToken',function($window , $routeParams){
     let authTokenFactory = {};
 
     authTokenFactory.getToken = function(){
-        return $window.localStorage.getItem('token');
+        if($routeParams.token) {
+            $window.localStorage.setItem('token', $routeParams.token);
+            $routeParams.token='';
+        }
+        return $window.localStorage.getItem('token') ;
     }
 
     authTokenFactory.setToken = function(token){

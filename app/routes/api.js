@@ -53,6 +53,49 @@ module.exports = function (app, express, io) {
     let api = express.Router();
 
 
+    api.post('/updateUserPassToken', function (req, res) {
+        // decoder le token et recuperer le user
+        let token = req.headers['x-access-token'];
+
+        //check if token exist
+        if (token) {
+            jsonwebtoken.verify(token, secretKey, function (err, user) {
+                if (err) {
+                    console.log(err);
+
+                } else {
+                    //all the info of user is in var user
+
+                    let passwordNew = bcrypt.hashSync(req.body.passwordNew, null, null);
+
+                    // And modify the old one
+                    let myquery = {_id: user.id};
+                    let newvalues = {$set: {password: passwordNew}};
+                    User.updateOne(myquery, newvalues, function (err) {
+                        if (err)
+                            console.log(err);
+                        else
+                            res.json({
+                                message: " new pass has been created !",
+
+
+                            });
+                    })
+
+
+                }
+            });
+        } else {
+            res.json({
+                success: false,
+                message: "le lien de changement de mot de pass est expiré demander un nouveau lien"
+            });
+
+        }
+
+
+    });
+
 
     api.post('/checkEmail', function (req, res) {
         if (validator.validate(req.body.username)) {
@@ -75,7 +118,7 @@ module.exports = function (app, express, io) {
             }).select('_id name username password admin').exec(function (err, user) {
                 if (err) {
                     res.send(err);
-                    return;
+                    console.log(err);
                 }
                 else if (user) {
                     //generer un nouveau pass
@@ -138,7 +181,63 @@ module.exports = function (app, express, io) {
             })
         }
     });
+    //send url to updating pass
+    api.post('/userSendModifyPassToken', function (req, res) {
+        //check mail
+        if (validator.validate(req.body.username)) {
 
+            User.findOne({
+                username: req.body.username
+            }).select('_id name username password admin').exec(function (err, user) {
+                if (err) {
+                    res.send(err);
+                    console.log(err);
+                }
+                else if (user) {
+                    //generer un token pour l'utulisateur
+                    let token = createToken(user);
+
+                    //envoiyé le lien de changement de pass
+
+                    let mailOptions = {
+                        from: 'agredivtube@gmail.com',
+                        to: user.username,
+                        subject: 'lien de changement de mot de pass ',
+                        text: 'https://localhost:3000/updatePass/' + token
+                    };
+
+                    transporter.sendMail(mailOptions, function (error, info) {
+                        if (error) {
+                            console.log(error);
+                        } else {
+                            console.log('Email sent: ' + info.response);
+                        }
+                    });
+
+
+                    res.json({
+                        message: "votre password a bien été envoyé, verifiez votre boite email!",
+                        succed: true
+
+                    });
+
+                }
+                else {
+                    res.json({
+                        message: "email incorrect ou il n'existe pas!",
+                        succed: false
+                    })
+                }
+
+            });
+        }
+        else {
+            res.json({
+                message: "format d'email incorrect! essayé a nouveau  xxx@xxx.xxx",
+                succed: false
+            })
+        }
+    });
 
     api.post('/signup', function (req, res) {
         let user = new User({
@@ -173,7 +272,7 @@ module.exports = function (app, express, io) {
                 res.send({message: "L'utilisateur n'existe pas !"});
             } else if (user) {
                 let validPassword = user.comparePassword(req.body.password);
-                if (!validPassword){
+                if (!validPassword) {
                     res.send({message: "Mot de passe incorrecte !"});
                 } else {
                     //Create a token for the login
@@ -202,7 +301,7 @@ module.exports = function (app, express, io) {
 
     api.post('/logoutDate', function (req, res) {
 
-        let myquery = {idUser: userConnected._id, log_In: dateLogin};
+        let myquery = {idUser: userConnected.id, log_In: dateLogin};
         let newvalues = {$set: {log_Out: (new Date().toLocaleString())}};
         UserLog.updateOne(myquery, newvalues, function (err) {
             if (err)
@@ -248,25 +347,21 @@ module.exports = function (app, express, io) {
         });
     });
 
-    api.post('/userhistorysParam', function (req,res) {
+    api.post('/userhistorysParam', function (req, res) {
 
         User.findOne({
             username: req.body.username
-        }).select('username').exec(function (err,user) {
+        }).select('username').exec(function (err, user) {
 
             UserHistory.find({idUser: user._id}, function (err, userHis) {
                 if (err) {
                     res.json(err);
 
                 }
-                if(userHis.length==0) res.json({request_Video:'No Date',request_date:'No Date'});
+                if (userHis.length == 0) res.json({request_Video: 'No Date', request_date: 'No Date'});
                 else res.json(userHis);
             })
         })
-
-
-
-
 
 
     });
@@ -297,7 +392,6 @@ module.exports = function (app, express, io) {
     });
 
 
-
     api.get('/userLoggs', function (req, res) {
 
 
@@ -314,7 +408,7 @@ module.exports = function (app, express, io) {
     api.post('/searchUserLoggs', function (req, res) {
         User.findOne({
             username: req.body.username
-        }).select('username').exec(function (err,user) {
+        }).select('username').exec(function (err, user) {
 
             UserLog.find({idUser: user._id}, function (err, userLoggs) {
                 if (err) {
@@ -368,7 +462,7 @@ module.exports = function (app, express, io) {
                 } else {
                     // create the new pass
                     let passwordlod = user.password;
-                    let passwordNew = bcrypt.hashSync(req.body.passwordNew,null,null);
+                    let passwordNew = bcrypt.hashSync(req.body.passwordNew, null, null);
 
                     // And modify the old one
                     let myquery = {_id: req.decoded.id};
@@ -377,10 +471,11 @@ module.exports = function (app, express, io) {
                         if (err)
                             console.log(err);
                         else
-                            res.json({message: "cretae new pass !" ,
+                            res.json({
+                                message: "cretae new pass !",
                                 passwordnew: passwordNew,
-                                passwordold :passwordlod,
-                                id : user._id
+                                passwordold: passwordlod,
+                                id: user._id
 
                             });
                     })
@@ -391,5 +486,5 @@ module.exports = function (app, express, io) {
     });
 
 
-        return api
+    return api
 };

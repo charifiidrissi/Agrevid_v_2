@@ -1,6 +1,6 @@
 angular.module('userCtrl',['userService'])
 
-.controller('UserController',function(User,Auth,$location,$window,$scope){
+.controller('UserController',function(User,Auth,$location,$window,$scope,$routeParams){
     let vm = this;
     vm.isUpdate = false;
     vm.historys = [];
@@ -8,6 +8,11 @@ angular.module('userCtrl',['userService'])
     vm.userSuccessfllyAdded = false;
     vm.successDelete = false;
     vm.HistorySearch=[];
+    //get token in order to change user pass
+    $scope.tokenUser= $routeParams.token;
+
+
+
     $scope.is_Admin= false;
     //pagination
     $scope.dataHistoriqueParam=[];
@@ -18,6 +23,8 @@ angular.module('userCtrl',['userService'])
     $scope.currentPageLoggs=1;
     $scope.itemsPerPage = 5;
     $scope.maxSize = 5; //Number of pager buttons to show
+
+
 
     User.all()
         .success(function (data) {
@@ -119,6 +126,24 @@ angular.module('userCtrl',['userService'])
 
 
     };
+
+    vm.updateUserPassToken = function () {
+
+
+        User.updateUserPassToken(vm.userData).success(function () {
+
+            $window.localStorage.setItem('token', '');
+
+            $location.path('/login');
+            $window.alert("votre compte a bien été modifier clicker ok pour se connecter");
+
+
+        });
+
+
+    };
+
+
 
 
 

@@ -45,6 +45,12 @@ angular.module('userService',[])
         return $http.post('/api/updateUserPass',userData);
     }
 
+    userFactory.updateUserPassToken = function(userData){
+        return $http.post('/api/updateUserPassToken',userData);
+    }
+
+
+
     userFactory.checkEmail = function(userData){
         return $http.post('/api/checkEmail',userData);
     }
