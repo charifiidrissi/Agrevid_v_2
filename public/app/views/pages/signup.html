@@ -6,7 +6,19 @@
                 Nom : <input type="text" class="form-control" name="name" ng-model="user.userData.name" required>
                 Email : <input type="email" class="form-control" name="username" ng-model="user.userData.username"
                                required>
-                Email : <input type="tel" class="form-control" name="tel" ng-model="user.userData.tel">
+                Tel :
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <input type="tel"  pattern="^\d{10}$" class="form-control" name="tel" ng-model="user.userData.tel">
+
+                        -Je veux securiser mon compte avec mon numero
+                        <input type="checkbox"  name="security" ng-model="user.userData.security">
+                    </div>
+                </div>
+
+
+
+
                 Mot de passe : <input type="password" class="form-control" name="password"
                                       ng-model="user.userData.password" required>
                 Confirmez votre mot de passe : <input type="password" name="passConfirm" class="form-control"

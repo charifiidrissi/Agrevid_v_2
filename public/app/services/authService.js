@@ -54,6 +54,7 @@ angular.module('authService',[])
         if($routeParams.token) {
             $window.localStorage.setItem('token', $routeParams.token);
             $routeParams.token='';
+            $routeParams.code='';
         }
         return $window.localStorage.getItem('token') ;
     }

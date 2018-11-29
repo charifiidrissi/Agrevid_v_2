@@ -15,9 +15,17 @@ const vidl = require('vimeo-downloader');
 /*Vimeo variables*/
 const Vimeo = require('vimeo').Vimeo;
 const client = new Vimeo(config.CLIENT_ID, config.CLIENT_SECRET, config.ACCESS_TOKEN);
+// Download the helper library from https://www.twilio.com/docs/node/install
+// Your Account Sid and Auth Token from twilio.com/console
+const accountSid = 'AC7b17f30d3222d073d2d835a9104dc3a3';
+const authToken = '9ebfb44275b59e222d4edd1b0bbe3279';
+const sms = require('twilio')(accountSid, authToken);
+//randomString generator
+const randomstring = require("randomstring");
 
 
 let secretKey = config.secretKey;
+
 
 
 //for creating tokens
@@ -40,7 +48,9 @@ function createToken(user) {
         id: user._id,
         name: user.name,
         username: user.username,
+        tel:user.tel,
         admin: user.admin
+
     }, secretKey, {
         //Le temps où l'utilisateur peut rester connecté avant de devoir se reconnecter
         expiresIn: 3600
@@ -48,6 +58,24 @@ function createToken(user) {
 
     return token;
 }
+
+function createTokenforUpdatePass(user,codeVerification) {
+    let token = jsonwebtoken.sign({
+        id: user._id,
+        name: user.name,
+        username: user.username,
+        tel:user.tel,
+        admin: user.admin,
+        codev : codeVerification,
+        useMyNumForSec:user.useMyNumForSec
+    }, secretKey, {
+        //Le temps où l'utilisateur peut rester connecté avant de devoir se reconnecter
+        expiresIn: 600
+    });
+
+    return token;
+}
+
 
 module.exports = function (app, express, io) {
     let api = express.Router();
@@ -59,31 +87,66 @@ module.exports = function (app, express, io) {
 
         //check if token exist
         if (token) {
-            jsonwebtoken.verify(token, secretKey, function (err, user) {
+            jsonwebtoken.verify(token, secretKey, function (err, userInfoToken) {
                 if (err) {
                     console.log(err);
 
-                } else {
-                    //all the info of user is in var user
-
-                    let passwordNew = bcrypt.hashSync(req.body.passwordNew, null, null);
-
-                    // And modify the old one
-                    let myquery = {_id: user.id};
-                    let newvalues = {$set: {password: passwordNew}};
-                    User.updateOne(myquery, newvalues, function (err) {
-                        if (err)
-                            console.log(err);
-                        else
-                            res.json({
-                                message: " new pass has been created !",
-
-
-                            });
-                    })
-
-
                 }
+                else {
+                   if(userInfoToken) {
+                       //all the info of user is in var user
+
+                       let passwordNew = bcrypt.hashSync(req.body.passwordNew, null, null);
+                       let myquery = {_id: userInfoToken.id};
+                       let newvalues = {$set: {password: passwordNew}};
+                       if (userInfoToken.useMyNumForSec) {
+
+                           if (req.body.codev == userInfoToken.codev) {
+
+                               console.log('depasse code v');
+                               // And modify the old one if the verification is correct
+
+                               User.updateOne(myquery, newvalues, function (err) {
+                                   if (err)
+                                       console.log(err);
+                                   else
+                                       res.json({
+                                           message: " new pass has been created !"
+
+
+                                       });
+                               })
+
+                           }
+                           else {
+                               console.log('ne depasse code v');
+                               res.json({
+                                   message: " verification code not valid !",
+                                   success: false
+
+
+                               });
+
+                           }
+                       }
+                       else {
+                           // And modify the old one if the verification is correct
+
+                           User.updateOne(myquery, newvalues, function (err) {
+                               if (err)
+                                   console.log(err);
+                               else
+                                   res.json({
+                                       message: " new pass has been created !",
+
+
+                                   });
+                           })
+                       }
+
+                   }
+
+                 }
             });
         } else {
             res.json({
@@ -183,28 +246,62 @@ module.exports = function (app, express, io) {
     });
     //send url to updating pass
     api.post('/userSendModifyPassToken', function (req, res) {
+
         //check mail
         if (validator.validate(req.body.username)) {
 
             User.findOne({
                 username: req.body.username
-            }).select('_id name username password admin').exec(function (err, user) {
+            }).select('_id name username password tel admin useMyNumForSec').exec(function (err, user) {
                 if (err) {
                     res.send(err);
                     console.log(err);
                 }
                 else if (user) {
-                    //generer un token pour l'utulisateur
-                    let token = createToken(user);
+
+
+                    let token ;
+                    let hasTel= false;
+                    
+                    //verifier si l'utilisateur possede un tel + active securité
+                    if(user.useMyNumForSec){
+                        //generer code de verification
+                          codev= randomstring.generate(7);
+                        //generer un token pour l'utulisateur
+                         token  =createTokenforUpdatePass(user,codev);
+                        //envoyé le code de verification par sms
+                        sms.messages
+                            .create({
+                                body: 'Agrevid your code verification is : '+codev,
+                                from: '+33644600633',
+                                to: user.tel
+                            })
+                            .then(message => console.log(message.sid))
+                            .done();
+
+                        hasTel= true;
+
+
+                    }
+                    else {
+                        //token without a code verification
+                         token  =createTokenforUpdatePass(user,'');
+
+                    }
 
                     //envoiyé le lien de changement de pass
+                    //modifier le token pour savoir si l user possede la securité
+                    let sec;
+                    if(user.useMyNumForSec) sec=1;
+                    else sec=0;
 
                     let mailOptions = {
                         from: 'agredivtube@gmail.com',
                         to: user.username,
                         subject: 'lien de changement de mot de pass ',
-                        text: 'https://localhost:3000/updatePass/' + token
+                        text: 'https://localhost:3000/updatePass/' + token+'/'+sec
                     };
+
 
                     transporter.sendMail(mailOptions, function (error, info) {
                         if (error) {
@@ -217,7 +314,8 @@ module.exports = function (app, express, io) {
 
                     res.json({
                         message: "votre password a bien été envoyé, verifiez votre boite email!",
-                        succed: true
+                        succed: true,
+                        tel : hasTel
 
                     });
 
@@ -239,16 +337,23 @@ module.exports = function (app, express, io) {
         }
     });
 
+
     api.post('/signup', function (req, res) {
         let user = new User({
             name: req.body.name,
             username: req.body.username,
             password: req.body.password,
-            admin: false
+            tel:req.body.tel,
+            admin: req.body.admin ,
+            useMyNumForSec: req.body.security
         });
 
         let token = createToken(user);
 
+        if(user.tel=="") {
+            user.tel="-";
+            user.useMyNumForSec=false;
+        }
         user.save(function (err) {
             if (err) {
                 res.send(err);
@@ -264,6 +369,10 @@ module.exports = function (app, express, io) {
 
 
     api.post('/login', function (req, res) {
+
+
+
+
         User.findOne({
             username: req.body.username
         }).select('_id name username password admin').exec(function (err, user) {

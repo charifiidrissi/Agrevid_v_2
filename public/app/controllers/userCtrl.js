@@ -10,6 +10,9 @@ angular.module('userCtrl',['userService'])
     vm.HistorySearch=[];
     //get token in order to change user pass
     $scope.tokenUser= $routeParams.token;
+    //get access security
+    $scope.hasSecurity= $routeParams.code;
+
 
 
 
@@ -25,6 +28,11 @@ angular.module('userCtrl',['userService'])
     $scope.maxSize = 5; //Number of pager buttons to show
 
 
+
+    vm.hasSecurity = function(){
+        if($scope.hasSecurity==1) return true;
+        else return false;
+    }
 
     User.all()
         .success(function (data) {

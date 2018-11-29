@@ -5,12 +5,12 @@
         <div class="container" ng-controller="UserController as user" style="width:350px;float: left;">
             <div class="row" >
                 <div class="col-sm-12" >
-                    {{tokenUser}}
+
                     <form method="post" ng-submit="user.updateUserPassToken()">
 
-
-                        <input type="password" class="input-lg form-control" name="password0" id="password0" placeholder="Code verification" autocomplete="off" ng-model="user.userData.codeV">
-
+                        <div ng-if="user.hasSecurity()">
+                        <input type="text" class="input-lg form-control"   placeholder="Code verification" autocomplete="off" ng-model="user.userData.codev" required>
+                        </div>
                         <input type="password" class="input-lg form-control" name="password1" id="password1" placeholder="New Password" autocomplete="off" ng-model="user.userData.passwordNew">
                         <div class="row">
                             <div class="col-sm-6">
