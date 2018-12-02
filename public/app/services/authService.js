@@ -37,6 +37,7 @@ angular.module('authService',[])
 
 
     authFactory.getUser = function(){
+
         if(AuthToken.getToken())
             return $http.get('/api/me');
         else

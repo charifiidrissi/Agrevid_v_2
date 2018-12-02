@@ -21,6 +21,12 @@
 
     </div>
 
+    <div  ng-if="user.showMessage()" class="alert alert-warning" style="margin-left:35% ;width: 400px;height: 60px;">
+        <button type="button" ng-click="user.stopMessage()" class="close" data-dismiss="alert" aria-hidden="true">
+            ×</button>
+        <strong>Warning!</strong> {{user.msg}}.
+    </div>
+
     </br></br>
 
     <div class="container" style="width: 50%">
@@ -63,25 +69,25 @@
 
                     <div class="form-group" >
                         <label class="control-label col-sm-2" for="nom2">Nom:</label>
-                        <div class="col-sm-10" ng-repeat="each in user.userSearched">
-                            <input readonly type="text" class="form-control" id="nom2"  name="nom2" value="{{each.name}}">
+                        <div class="col-sm-10">
+                            <input readonly type="text" class="form-control" id="nom2"  name="nom2" value="{{user.userSearched.name}}">
                         </div>
                     </div>
                     <br><br>
                     <div class="form-group">
                         <label class="control-label col-sm-2" for="email2">Email:</label>
-                        <div class="col-sm-10" ng-repeat="each in user.userSearched">
-                            <input readonly type="email" class="form-control" id="email2"  name="email2" value="{{each.username}}">
+                        <div class="col-sm-10">
+                            <input readonly type="email" class="form-control" id="email2"  name="email2" value="{{user.userSearched.username}}">
                         </div>
                     </div>
                     <br>
                     <br>
                     <label class="control-label col-sm-2" >role : </label>
 
-                    <div ng-repeat="each in user.userSearched">
-                       <div  ng-if="each.admin"> <p>Admin</p></div>
+                    <div  >
+                       <div  ng-if="user.userSearched.admin"> <p>Admin</p></div>
 
-                       <div  ng-if="!each.admin"> <p>Utilisateur</p></div>
+                       <div  ng-if="!user.userSearched.admin"> <p>Utilisateur</p></div>
 
                    </div>
 

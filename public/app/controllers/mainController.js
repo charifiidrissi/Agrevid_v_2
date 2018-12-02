@@ -9,6 +9,7 @@ angular.module('mainCtrl', [])
         vm.isAdmin = false;
         vm.message;
         vm.succed;
+        vm.throws=false;
         vm.submitSendPass= false;
 
         $rootScope.$on('$routeChangeStart', function () {
@@ -20,6 +21,16 @@ angular.module('mainCtrl', [])
                     vm.isAdmin = data.data.admin;
                 });
         });
+
+//pour gerer la fichage des notifications
+        vm.showMessage = function(){
+
+            return  vm.throws;
+        }
+
+        vm.stopMessage= function(){
+            vm.throws = false;
+        }
 
 
         vm.doLogin = function () {
@@ -91,7 +102,8 @@ angular.module('mainCtrl', [])
                                 $location.path('/');
                             else {
                                 vm.error = data.message;
-                                $window.alert(vm.error);
+                                vm.throws=true;
+
                             }
                         });
 
@@ -134,7 +146,6 @@ angular.module('mainCtrl', [])
         vm.submitOk = function () {
             return vm.submitSendPass;
         }
-
 
     });
 

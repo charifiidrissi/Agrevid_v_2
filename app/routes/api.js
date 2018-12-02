@@ -378,11 +378,11 @@ module.exports = function (app, express, io) {
         }).select('_id name username password admin').exec(function (err, user) {
             if (err) throw err;
             if (!user) {
-                res.send({message: "L'utilisateur n'existe pas !"});
+                res.json({message: "Mot de passe ou l'email incorrecte !"});
             } else if (user) {
                 let validPassword = user.comparePassword(req.body.password);
                 if (!validPassword) {
-                    res.send({message: "Mot de passe incorrecte !"});
+                    res.json({message: "Mot de passe ou l'email incorrecte !"});
                 } else {
                     //Create a token for the login
                     let token = createToken(user);
@@ -461,15 +461,16 @@ module.exports = function (app, express, io) {
         User.findOne({
             username: req.body.username
         }).select('username').exec(function (err, user) {
+          if(user) {
+              UserHistory.find({idUser: user._id}, function (err, userHis) {
+                  if (err) {
+                      res.json(err);
 
-            UserHistory.find({idUser: user._id}, function (err, userHis) {
-                if (err) {
-                    res.json(err);
-
-                }
-                if (userHis.length == 0) res.json({request_Video: 'No Date', request_date: 'No Date'});
-                else res.json(userHis);
-            })
+                  }
+                  if (userHis.length == 0) res.json({request_Video: 'No Date', request_date: 'No Date'});
+                  else res.json(userHis);
+              })
+          }
         })
 
 
@@ -490,14 +491,17 @@ module.exports = function (app, express, io) {
     });
 
     api.post('/user', function (req, res) {
-        User.find({username: req.body.username}, function (err, user) {
-            if (err) {
-                res.send(err);
-                return;
-            }
 
-            res.json(user);
-        });
+        User.findOne({
+            username: req.body.username
+        }).select('username name admin').exec(function (err, user) {
+
+            if(user) res.json({user2:user,resp:true});
+            else res.json({user2:user,resp:false});
+        })
+
+
+
     });
 
 
@@ -518,14 +522,15 @@ module.exports = function (app, express, io) {
         User.findOne({
             username: req.body.username
         }).select('username').exec(function (err, user) {
+         if(user) {
+             UserLog.find({idUser: user._id}, function (err, userLoggs) {
+                 if (err) {
+                     res.send(err);
 
-            UserLog.find({idUser: user._id}, function (err, userLoggs) {
-                if (err) {
-                    res.send(err);
-                    return;
-                }
-                res.json(userLoggs);
-            });
+                 }
+                 res.json(userLoggs);
+             });
+         }
         })
 
 
@@ -537,19 +542,68 @@ module.exports = function (app, express, io) {
             if (err)
                 console.log(err);
             else
-                res.json({message: 'User deleted'});
+                res.json({message: 'User deleted',success:true});
         });
     });
 
-    api.post('/updateUser', function (req, res) {
+    api.post('/updateUser', function (req, res,next) {
         let myquery = {_id: req.decoded.id};
-        let newvalues = {$set: {name: req.body.name, username: req.body.email}};
-        User.updateOne(myquery, newvalues, function (err) {
-            if (err)
-                console.log(err);
-            else
-                res.json({message: 'User has been modified'});
-        });
+        let newvalues;
+        let successReturn=false;
+        let msg ;
+        let newEmail;
+        let newName;
+
+        console.log(msg+">>>>>>>>>>>>>>>>>>");
+        if (( req.body.name+"" == 'undefined') && (req.body.email+"" == 'undefined')){
+            msg = "Aucune modification n'as été pris en charge, essayez de saisir";
+            successReturn = false;
+
+    }
+        else if(req.body.name+"" != 'undefined' &&  req.body.email+"" == 'undefined' ){
+             newvalues = {$set: {name: req.body.name}};
+            msg = "Votre nom est bien modifie";
+            successReturn = true;
+
+
+        }
+
+        else if( req.body.name+"" == 'undefined' &&  req.body.email+"" != 'undefined' ){
+             newvalues = {$set: {username: req.body.email}};
+             msg= "Votre email est bien modifie";
+             successReturn = true;
+
+
+
+        }
+        else if( req.body.name+"" != 'undefined' && req.body.email+"" != 'undefined' ){
+            newvalues = {$set: {name: req.body.name, username: req.body.email}};
+            msg = "Votre email et nom sont bien modifie";
+            successReturn = true;
+
+
+
+        }
+
+
+
+
+        if(successReturn) {
+            User.updateOne(myquery, newvalues, function (err) {
+                if (err)
+                    console.log(err);
+
+
+
+                 else{
+
+                    res.json({message: msg, success: true});
+
+                    }
+
+
+            })
+            } else res.json({message: msg, success: false});
 
 
     });
@@ -561,12 +615,13 @@ module.exports = function (app, express, io) {
             if (err) res.send({message: "err select"});
 
             if (!user) {
-                res.json({message: "L'utilisateur n'existe pas !"});
+                res.json({message: "L'utilisateur n'existe pas !",
+                           success:false});
 
             } else if (user) {
                 let validPassword = user.comparePassword(req.body.passwordOld);
                 if (!validPassword) {
-                    res.json({message: "Mot de passe incorrecte !"});
+                    res.json({message: "Ancien mot de passe incorrecte !",success:false});
 
                 } else {
                     // create the new pass
@@ -581,10 +636,8 @@ module.exports = function (app, express, io) {
                             console.log(err);
                         else
                             res.json({
-                                message: "cretae new pass !",
-                                passwordnew: passwordNew,
-                                passwordold: passwordlod,
-                                id: user._id
+                                message: "Votre mot de passe a bien été changer !",
+                                success:true
 
                             });
                     })

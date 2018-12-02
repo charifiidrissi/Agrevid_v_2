@@ -1,36 +1,38 @@
 angular.module('userCtrl',['userService'])
 
-.controller('UserController',function(User,Auth,$location,$window,$scope,$routeParams){
+.controller('UserController',function(User,Auth,AuthToken,$location,$window,$scope,$routeParams,$timeout) {
     let vm = this;
     vm.isUpdate = false;
     vm.historys = [];
     vm.loggs = [];
     vm.userSuccessfllyAdded = false;
     vm.successDelete = false;
-    vm.HistorySearch=[];
+    vm.HistorySearch = [];
+    vm.OldPass = false;
+    vm.msg;
+    vm.throws = false;
+    vm.updateTrue = false;
+    vm.newInfo;
     //get token in order to change user pass
-    $scope.tokenUser= $routeParams.token;
+    $scope.tokenUser = $routeParams.token;
     //get access security
-    $scope.hasSecurity= $routeParams.code;
+    $scope.hasSecurity = $routeParams.code;
 
 
-
-
-    $scope.is_Admin= false;
+    $scope.is_Admin = false;
     //pagination
-    $scope.dataHistoriqueParam=[];
-    $scope.dataHistoriqueUser=[];
-    $scope.dataLogss=[];
+    $scope.dataHistoriqueParam = [];
+    $scope.dataHistoriqueUser = [];
+    $scope.dataLogss = [];
     $scope.currentPage = 1;
-    $scope.currentPageHistoriqueParam=1;
-    $scope.currentPageLoggs=1;
+    $scope.currentPageHistoriqueParam = 1;
+    $scope.currentPageLoggs = 1;
     $scope.itemsPerPage = 5;
     $scope.maxSize = 5; //Number of pager buttons to show
 
 
-
-    vm.hasSecurity = function(){
-        if($scope.hasSecurity==1) return true;
+    vm.hasSecurity = function () {
+        if ($scope.hasSecurity == 1) return true;
         else return false;
     }
 
@@ -39,12 +41,33 @@ angular.module('userCtrl',['userService'])
             vm.users = data;
         })
 
-    vm.getUser = function(){
-        User.user(vm.userData).success(function (data) {
-            vm.userSearched = data;
-            $scope.is_Admin = vm.userSearched.admin;
-            vm.successDelete = false;
-        })
+    Auth.getUser()
+        .then(function (data) {
+            vm.newInfo = data.data;
+        });
+
+
+
+       vm.getUser = function() {
+           let Error=false;
+            vm.userSearched ={};
+           User.user(vm.userData).success(function (data) {
+
+               Error = data.resp;
+               if(!Error){
+                   vm.msg = "Utilisateur introuvable";
+                   vm.throws = true;
+                }else {
+
+                    vm.userSearched = data.user2; 
+                    $scope.is_Admin = vm.userSearched.admin;
+                    vm.successDelete = false;                 
+
+
+               }
+
+
+           })
 
         User.getHistorySearchParam(vm.userData)
             .success(function (data) {
@@ -52,6 +75,7 @@ angular.module('userCtrl',['userService'])
                 $scope.dataHistoriqueParam = data;
                 $scope.totalItemsHistoriqueParam = vm.historys.length;
             })
+
 
         User.getLoggsParam(vm.userData)
             .success(function (data) {
@@ -102,57 +126,98 @@ angular.module('userCtrl',['userService'])
         });
 
     vm.deleteUser = function(){
-        User.delete(vm.userData).success(function () {
-            console.log('User deleted !');
+        User.delete(vm.userData).success(function (resp) {
+              vm.successDelete = resp.success;
         });
 
     };
+//pour gerer la fichage des notifications
+    vm.showMessage = function(){
+
+        return  vm.throws;
+    }
+
+    vm.stopMessage= function(){
+        vm.throws = false;
+    }
+
+    //time
+    $scope.time = 0;
+    $scope.timeSeconde = 0;
+
+    //timer callback
+    var timer = function() {
+        if( $scope.time < 5000 ) {
+            $scope.time += 1000;
+            $scope.timeSeconde+= 1;
+            $timeout(timer, 1000);
+        }
+    }
+
+
 
 
     vm.updateUser = function () {
-        User.update(vm.userData).success(function () {
+        $timeout( function(){
+            $window.localStorage.setItem('token','');
+            $location.path('/lgin');
+        }, 5000 );
 
-            $window.localStorage.setItem('token', '');
-            $location.path('/login');
-            $window.alert("votre compte a bien été modifier clicker ok pour se connecter");
+        User.update(vm.userData).success(function (message) {
 
+            vm.updateTrue = message.success;
+            vm.msg = message.message;
+            vm.throws = true;
 
-        });
+              //run!!
+            $timeout(timer, 1000);
 
-
-    };
-
-    vm.updateUserPass = function () {
-        User.updateUserPass(vm.userData).success(function () {
-
-            $window.localStorage.setItem('token', '');
-            $location.path('/login');
-            $window.alert("votre compte a bien été modifier clicker ok pour se connecter");
-
-
-        });
-
-
-    };
-
-    vm.updateUserPassToken = function () {
-
-
-        User.updateUserPassToken(vm.userData).success(function () {
-
-            $window.localStorage.setItem('token', '');
-
-            $location.path('/login');
-            $window.alert("votre compte a bien été modifier clicker ok pour se connecter");
-
-
-        });
-
-
-    };
+        })
 
 
 
+    }
+
+        vm.updateUserSucced = function () {
+            return vm.updateTrue;
+        }
+
+
+        vm.updateUserPass = function () {
+            User.updateUserPass(vm.userData).success(function (message) {
+
+                vm.oldPass = message.success;
+                vm.msg = message.message;
+                vm.throws = true;
+                //   $window.localStorage.setItem('token', '');
+                //  $location.path('/login');
+                // $window.alert("votre compte a bien été modifier clicker ok pour se connecter");
+
+
+            });
+
+
+        }
+
+        vm.isOldPassTrue = function () {
+            return vm.oldPass;
+        }
+
+        vm.updateUserPassToken = function () {
+
+
+            User.updateUserPassToken(vm.userData).success(function () {
+
+                $window.localStorage.setItem('token', '');
+
+                $location.path('/login');
+                $window.alert("votre compte a bien été modifier clicker ok pour se connecter");
+
+
+            });
+
+
+        };
 
 
 

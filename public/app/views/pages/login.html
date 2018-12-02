@@ -3,6 +3,11 @@
     <div class="row">
         <div class="col-sm-5 col-md-4 col-md-offset-4">
             <h2>Connexion</h2>
+            <div  ng-if="login.showMessage()" class="alert alert-warning" style="margin-left:0% ;width: 360px;height: 50px;">
+                <button type="button" ng-click="login.stopMessage()" class="close" data-dismiss="alert" aria-hidden="true">
+                    ×</button>
+                <strong>Warning!</strong> {{login.error}}.
+            </div>
             <form class="form-signin" method="post" ng-submit="login.doLogin()">
                 Email : <input class="form-control" type="text" name="username" ng-model="login.loginData.username">
                 Mot de passe : <input  class="form-control" type="password" name="password" ng-model="login.loginData.password">
